@@ -164,6 +164,7 @@ Meteor.methods({
 					emails: user.emails,
 					federation: user.federation,
 					isRemote: true,
+					user : user
 				});
 			}
 		}
