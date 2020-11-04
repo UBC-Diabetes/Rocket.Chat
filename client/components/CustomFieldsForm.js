@@ -18,7 +18,7 @@ const CustomNumericInput = ({ name, required, setState, state, className }) => {
 		}
 
 		return errors.join(', ');
-	}, [state, required, minLength, t]);
+	}, [state, required, t]);
 
 	const validateNumericInput = (e) => {
 		let value = e.target.value;
@@ -36,7 +36,7 @@ const CustomNumericInput = ({ name, required, setState, state, className }) => {
 			<TextInput name={name} error={verify} flexGrow={1} value={state} required={required} onChange={validateNumericInput}/>
 		</Field.Row>
 		<Field.Error>{verify}</Field.Error>
-	</Field>, [className, t, name, verify, maxLength, state, required, setState]);
+	</Field>, [className, t, name, verify, state, required, setState]);
 };
 
 const CustomTextInput = ({
@@ -167,8 +167,7 @@ const CustomFieldsAssembler = ({ formValues, formHandlers, customFields, ...prop
 			...value,
 		};
 
-		alert('CustomFieldsAssembler value', JSON.stringify(value));
-	alert('isNumeric', value.type === 'numeric');if (value.type === 'select') {
+		if (value.type === 'select') {
 			return <CustomSelect {...extraProps} {...props} />;
 		}
 
