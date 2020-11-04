@@ -21,10 +21,9 @@ const CustomNumericInput = ({ name, required, setState, state, className }) => {
 	}, [state, required, t]);
 
 	const validateNumericInput = (e) => {
-		let value = e.target.value;
-
-        if (!Number(value)) {
-            return;
+		const value = e.target.value;
+		if (!Number(value)) {
+			return;
 		}
 
 		setState(e.currentTarget.value);
