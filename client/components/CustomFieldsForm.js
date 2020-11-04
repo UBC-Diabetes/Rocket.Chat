@@ -27,7 +27,7 @@ const CustomNumericInput = ({ name, required, setState, state, className }) => {
 		}
 
 		setState(value);
-	}
+	};
 
 	return useMemo(() => <Field className={className}>
 		<Field.Label>{t(name)}</Field.Label>
