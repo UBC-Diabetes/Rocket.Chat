@@ -23,6 +23,7 @@ import './methods/addRoomModerator';
 import './methods/addRoomOwner';
 import './methods/afterVerifyEmail';
 import './methods/browseChannels';
+import './methods/browseProfileLibrary';
 import './methods/canAccessRoom';
 import './methods/channelsList';
 import './methods/createDirectMessage';
