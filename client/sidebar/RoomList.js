@@ -1,4 +1,3 @@
-import s from 'underscore.string';
 import { Sidebar, Box, Badge } from '@rocket.chat/fuselage';
 import { useResizeObserver } from '@rocket.chat/fuselage-hooks';
 import React, { useRef, useEffect } from 'react';
@@ -7,7 +6,7 @@ import memoize from 'memoize-one';
 
 import { usePreventDefault } from './hooks/usePreventDefault';
 import { filterMarkdown } from '../../app/markdown/lib/markdown';
-import { ReactiveUserStatus, colors } from '../components/basic/UserStatus';
+import { ReactiveUserStatus, colors } from '../components/UserStatus';
 import { useTranslation } from '../contexts/TranslationContext';
 import { roomTypes } from '../../app/utils';
 import { useUserPreference, useUserId } from '../contexts/UserContext';
@@ -19,6 +18,8 @@ import { useShortcutOpenMenu } from './hooks/useShortcutOpenMenu';
 import { useAvatarTemplate } from './hooks/useAvatarTemplate';
 import { useRoomList } from './hooks/useRoomList';
 import { useSidebarPaletteColor } from './hooks/useSidebarPaletteColor';
+import { escapeHTML } from '../../lib/escapeHTML';
+import ScrollableContentWrapper from '../components/ScrollableContentWrapper';
 
 const sections = {
 	Omnichannel,
@@ -82,21 +83,23 @@ export const Row = React.memo(({ data, index, style }) => {
 	return <SideBarItemTemplateWithData sidebarViewMode={sidebarViewMode} style={style} selected={item.rid === openedRoom} t={t} room={item} extended={extended} SideBarItemTemplate={SideBarItemTemplate} AvatarTemplate={AvatarTemplate} />;
 }, areEqual);
 
-export const normalizeSidebarMessage = ({ ...message }) => {
+export const normalizeSidebarMessage = (message, t) => {
 	if (message.msg) {
-		return filterMarkdown(message.msg);
+		return escapeHTML(filterMarkdown(message.msg));
 	}
 
 	if (message.attachments) {
 		const attachment = message.attachments.find((attachment) => attachment.title || attachment.description);
 
 		if (attachment && attachment.description) {
-			return s.escapeHTML(attachment.description);
+			return escapeHTML(attachment.description);
 		}
 
 		if (attachment && attachment.title) {
-			return s.escapeHTML(attachment.title);
+			return escapeHTML(attachment.title);
 		}
+
+		return t('Sent_an_attachment');
 	}
 };
 
@@ -128,6 +131,7 @@ export default () => {
 
 	return <Box h='full' w='full' ref={ref}>
 		<List
+			outerElementType={ScrollableContentWrapper}
 			height={blockSize}
 			itemCount={roomsList.length}
 			itemSize={(index) => (typeof roomsList[index] === 'string' ? (sections[roomsList[index]] && sections[roomsList[index]].size) || 40 : itemSize)}
@@ -147,15 +151,15 @@ const getMessage = (room, lastMessage, t) => {
 		return t('No_messages_yet');
 	}
 	if (!lastMessage.u) {
-		return normalizeSidebarMessage(lastMessage);
+		return normalizeSidebarMessage(lastMessage, t);
 	}
 	if (lastMessage.u?.username === room.u?.username) {
-		return `${ t('You') }: ${ normalizeSidebarMessage(lastMessage) }`;
+		return `${ t('You') }: ${ normalizeSidebarMessage(lastMessage, t) }`;
 	}
-	if (room.t === 'd' && room.uids.length <= 2) {
-		return normalizeSidebarMessage(lastMessage);
+	if (room.t === 'd' && room.uids && room.uids.length <= 2) {
+		return normalizeSidebarMessage(lastMessage, t);
 	}
-	return `${ lastMessage.u.name || lastMessage.u.username }: ${ normalizeSidebarMessage(lastMessage) }`;
+	return `${ lastMessage.u.name || lastMessage.u.username }: ${ normalizeSidebarMessage(lastMessage, t) }`;
 };
 
 export const SideBarItemTemplateWithData = React.memo(function SideBarItemTemplateWithData({ room, id, extended, selected, SideBarItemTemplate, AvatarTemplate, t, style, sidebarViewMode, isAnonymous }) {
@@ -184,7 +188,7 @@ export const SideBarItemTemplateWithData = React.memo(function SideBarItemTempla
 
 	const subtitle = message ? <span className='message-body--unstyled' dangerouslySetInnerHTML={{ __html: message }}/> : null;
 	const variant = ((userMentions || tunreadUser.length) && 'danger') || (threadUnread && 'primary') || (groupMentions && 'warning') || 'ghost';
-	const badges = unread > 0 || threadUnread ? <Badge variant={ variant } flexShrink={0}>{unread + tunread?.length}</Badge> : null;
+	const badges = unread > 0 || threadUnread ? <Badge style={{ flexShrink: 0 }} variant={ variant }>{unread + tunread?.length}</Badge> : null;
 
 	return <SideBarItemTemplate
 		is='a'
@@ -203,7 +207,7 @@ export const SideBarItemTemplateWithData = React.memo(function SideBarItemTempla
 		style={style}
 		badges={badges}
 		avatar={AvatarTemplate && <AvatarTemplate {...room}/>}
-		menu={!isAnonymous && !isQueued && (() => <RoomMenu rid={rid} unread={!!unread} roomOpen={false} type={type} cl={cl} name={title} status={room.status}/>)}
+		menu={!isAnonymous && !isQueued && (() => <RoomMenu alert={alert} threadUnread={threadUnread} rid={rid} unread={!!unread} roomOpen={false} type={type} cl={cl} name={title} status={room.status}/>)}
 	/>;
 }, (prevProps, nextProps) => {
 	if (['id', 'style', 'extended', 'selected', 'SideBarItemTemplate', 'AvatarTemplate', 't', 'sidebarViewMode'].some((key) => prevProps[key] !== nextProps[key])) {
@@ -223,5 +227,12 @@ export const SideBarItemTemplateWithData = React.memo(function SideBarItemTempla
 	if (prevProps.room.lastMessage?._updatedAt?.toISOString() !== nextProps.room.lastMessage?._updatedAt?.toISOString()) {
 		return false;
 	}
+	if (prevProps.room.alert !== nextProps.room.alert) {
+		return false;
+	}
+	if (prevProps.room.v?.status !== nextProps.room.v?.status) {
+		return false;
+	}
+
 	return true;
 });

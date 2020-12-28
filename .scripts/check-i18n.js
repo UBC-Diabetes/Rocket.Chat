@@ -2,20 +2,20 @@ const fs = require('fs');
 
 const fg = require('fast-glob');
 
-const checkFiles = async (path, source) => {
+const checkFiles = async (path, source, fix = false) => {
 	const sourceFile = JSON.parse(fs.readFileSync(`${ path }${ source }`, 'utf8'));
 
-	const regexVar = /__([a-zA-Z_]+?)__/g;
+	const regexVar = /__[a-zA-Z_]+__/g;
 
 	const usedKeys = Object.entries(sourceFile)
-		.filter(([, value]) => regexVar.exec(value))
 		.map(([key, value]) => {
 			const replaces = value.match(regexVar);
 			return {
 				key,
 				replaces,
 			};
-		});
+		})
+		.filter(({ replaces }) => !!replaces);
 
 	const validateKeys = (json) =>
 		usedKeys
@@ -23,7 +23,7 @@ const checkFiles = async (path, source) => {
 			.reduce((prev, cur) => {
 				const { key, replaces } = cur;
 
-				const miss = replaces.filter((replace) => json[key].indexOf(replace) === -1);
+				const miss = replaces.filter((replace) => json[key] && json[key].indexOf(replace) === -1);
 
 				if (miss.length > 0) {
 					prev.push({ key, miss });
@@ -34,57 +34,61 @@ const checkFiles = async (path, source) => {
 
 	const i18nFiles = await fg([`${ path }/**/*.i18n.json`]);
 
-	// const getInvalidKeys = (json) =>
-	// 	usedKeys
-	// 		.filter(({ key }) => typeof json[key] !== 'undefined')
-	// 		.filter(({ key, replaces }) => {
-	// 			const miss = replaces.filter((replace) => json[key].indexOf(replace) === -1);
+	const removeMissingKeys = () => {
+		i18nFiles.forEach((file) => {
+			const json = JSON.parse(fs.readFileSync(file, 'utf8'));
+			if (Object.keys(json).length === 0) {
+				return;
+			}
 
-	// 			return miss.length > 0;
-	// 		})
-	// 		.map(({ key }) => key);
+			validateKeys(json)
+				.forEach(({ key }) => {
+					json[key] = null;
+				});
 
-	// const removeMissingKeys = () => {
-	// 	const allKeys = Object.keys(sourceFile);
-	// 	i18nFiles.forEach((file) => {
-	// 		const json = JSON.parse(fs.readFileSync(file, 'utf8'));
+			fs.writeFileSync(file, JSON.stringify(json, null, 2));
+		});
+	};
 
-	// 		const invalidKeys = getInvalidKeys(json);
+	const validate = () => {
+		let totalErrors = 0;
+		i18nFiles.filter((file) => {
+			const json = JSON.parse(fs.readFileSync(file, 'utf8'));
 
-	// 		const validKeys = allKeys.filter((key) => !invalidKeys.includes(key));
-	// 		// console.log('validKeys', file, validKeys);
+			const result = validateKeys(json);
 
-	// 		fs.writeFileSync(file, JSON.stringify(json, validKeys, 2));
-	// 	});
-	// };
+			if (result.length === 0) {
+				return true;
+			}
 
-	let totalErrors = 0;
-	i18nFiles.filter((file) => {
-		const json = JSON.parse(fs.readFileSync(file, 'utf8'));
+			totalErrors += result.length;
 
-		const result = validateKeys(json);
+			console.log('\n## File', file, `(${ result.length } errors)`);
 
-		if (result.length === 0) {
-			return true;
-		}
+			result.forEach(({ key, miss }) => {
+				console.log('\n- Key:', key, '\n  Missing variables:', miss.join(', '));
+			});
 
-		totalErrors += result.length;
-
-		console.log('\n## File', file, `(${ result.length } errors)`);
-
-		result.forEach(({ key, miss }) => {
-			console.log('\n- Key:', key, '\n  Missing variables:', miss.join(', '));
+			return false;
 		});
 
-		return false;
-	});
+		if (totalErrors > 0) {
+			throw new Error(`\n${ totalErrors } errors found`);
+		}
+	};
 
-	if (totalErrors > 0) {
-		console.error(`\n${ totalErrors } errors found`);
-		process.exit(1);
+	if (fix) {
+		return removeMissingKeys();
 	}
 
-	process.exit(0);
+	validate();
 };
 
-checkFiles('./packages/rocketchat-i18n', '/i18n/en.i18n.json');
+(async () => {
+	try {
+		await checkFiles('./packages/rocketchat-i18n', '/i18n/en.i18n.json', process.argv[2] === '--fix');
+	} catch (e) {
+		console.error(e);
+		process.exit(1);
+	}
+})();
