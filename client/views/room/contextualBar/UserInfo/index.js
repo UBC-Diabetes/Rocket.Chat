@@ -2,6 +2,8 @@ import React, { useMemo } from 'react';
 import { Box, Margins, Tag, Button, Icon } from '@rocket.chat/fuselage';
 import { css } from '@rocket.chat/css-in-js';
 
+import { Meteor } from 'meteor/meteor';
+import { hasRole } from '../../../../../app/authorization';
 import { useTranslation } from '../../../../contexts/TranslationContext';
 import { useSetting } from '../../../../contexts/SettingsContext';
 import { ReactiveUserStatus } from '../../../../components/UserStatus';
@@ -54,6 +56,9 @@ export const UserInfo = React.memo(function UserInfo({
 
 	const timeAgo = useTimeAgo();
 
+	const uid = Meteor.userId();
+	const isAdmin = hasRole(uid, ['admin']);
+
 	return <VerticalBar.ScrollableContent p='x24' {...props}>
 
 		<Box alignSelf='center'>
@@ -66,12 +71,12 @@ export const UserInfo = React.memo(function UserInfo({
 			<UserCard.Username name={(showRealNames && name) || username || name} status={status} />
 			<Info>{customStatus}</Info>
 
-			{!!roles && <>
+			{isAdmin && !!roles && <>
 				<Label>{t('Roles')}</Label>
 				<UserCard.Roles>{roles}</UserCard.Roles>
 			</>}
 
-			{Number.isInteger(utcOffset) && <>
+			{isAdmin && Number.isInteger(utcOffset) && <>
 				<Label>{t('Local_Time')}</Label>
 				<Info><UTCClock utcOffset={utcOffset}/></Info>
 			</>}
@@ -81,8 +86,10 @@ export const UserInfo = React.memo(function UserInfo({
 				<Info>{username}</Info>
 			</>}
 
+			{isAdmin && <>
 			<Label>{t('Last_login')}</Label>
 			<Info>{lastLogin ? timeAgo(lastLogin) : t('Never')}</Info>
+			</>}
 
 			{name && <>
 				<Label>{t('Full Name')}</Label>
@@ -120,8 +127,10 @@ export const UserInfo = React.memo(function UserInfo({
 				<Info>{value}</Info>
 			</React.Fragment>) }
 
+			{isAdmin && <>
 			<Label>{t('Created_at')}</Label>
 			<Info>{timeAgo(createdAt)}</Info>
+			</>}
 
 		</Margins>
 
