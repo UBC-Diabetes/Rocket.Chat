@@ -15,20 +15,12 @@
 		"start": "meteor",
 		"debug": "meteor run --inspect",
 		"debug-brk": "meteor run --inspect-brk",
-		"lint": "meteor npm run stylelint && meteor npm run eslint",
-		"jslint": "eslint --ext .js,.jsx .",
-		"tslint": "eslint --ext .ts,.tsx .",
-		"eslint": "meteor npm run jslint && meteor npm run tslint",
-		"stylelint": "stylelint --fix \"app/**/*.css\" \"client/**/*.css\" \"app/**/*.less\" \"client/**/*.less\" \"ee/**/*.less\"",
 		"typecheck": "tsc --noEmit --skipLibCheck",
 		"deploy": "npm run build && pm2 startOrRestart pm2.json",
 		"coverage": "nyc -r html mocha --config ./.mocharc.js",
-		"testci": "node .scripts/start.js",
-		"testui": "cypress run --project tests",
 		"testapi": "mocha --config ./mocha_end_to_end.opts.js",
 		"testunit": "mocha --config ./.mocharc.js",
 		"testunit-watch": "mocha --watch --config ./.mocharc.js",
-		"test": "npm run testapi && npm run testui",
 		"translation-diff": "node .scripts/translationDiff.js",
 		"translation-check": "node .scripts/check-i18n.js",
 		"translation-fix-order": "node .scripts/fix-i18n.js",
@@ -274,11 +266,6 @@
 		"mainModule": {
 			"client": "client/main.js",
 			"server": "server/main.js"
-		}
-	},
-	"husky": {
-		"hooks": {
-			"pre-push": "meteor npm run lint && meteor npm run testunit"
 		}
 	},
 	"houston": {
