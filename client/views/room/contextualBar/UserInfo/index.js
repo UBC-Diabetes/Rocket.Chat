@@ -41,6 +41,7 @@ export const UserInfo = React.memo(function UserInfo({
 	phone,
 	customStatus,
 	roles = [],
+	rawroles = [],
 	lastLogin,
 	createdAt,
 	utcOffset,
@@ -58,11 +59,28 @@ export const UserInfo = React.memo(function UserInfo({
 
 	const uid = Meteor.userId();
 	const isAdmin = hasRole(uid, ['admin']);
+	const isPeerSupporter = rawroles.indexOf('Peer Supporter') > -1;
 
 	return <VerticalBar.ScrollableContent p='x24' {...props}>
 
 		<Box alignSelf='center'>
-			<Avatar size={'x332'} username={username} etag={data?.avatarETag}/>
+			{ isPeerSupporter ? (
+				<>
+				 <div className="video-responsive">
+				 <iframe
+				   width="380"
+				   height="240"
+				   src={customFields.VideoUrl}
+				   frameBorder="0"
+				   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+				   allowFullScreen
+				   title="Embedded youtube"
+				 />
+			   </div>
+			   </>
+			) : (
+				<Avatar size={'x332'} username={username} etag={data?.avatarETag}/>	
+			)}
 		</Box>
 
 		{actions}
@@ -165,6 +183,7 @@ export const UserInfoWithData = React.memo(function UserInfoWithData({ uid, user
 		),
 	);
 
+
 	const user = useMemo(() => {
 		const { user } = value || { user: {} };
 		const {
@@ -172,6 +191,7 @@ export const UserInfoWithData = React.memo(function UserInfoWithData({ uid, user
 			name,
 			username,
 			roles = [],
+			rawroles = [],
 			status = null,
 			statusText,
 			bio,
@@ -179,6 +199,7 @@ export const UserInfoWithData = React.memo(function UserInfoWithData({ uid, user
 			lastLogin,
 			nickname,
 		} = user;
+
 		return {
 			name: showRealNames ? name : username,
 			username,
@@ -186,6 +207,7 @@ export const UserInfoWithData = React.memo(function UserInfoWithData({ uid, user
 			roles: roles && getRoles(roles).map((role, index) => (
 				<UserCard.Role key={index}>{role}</UserCard.Role>
 			)),
+			rawroles: roles && getRoles(roles),
 			bio,
 			phone: user.phone,
 			customFields: user.customFields,
