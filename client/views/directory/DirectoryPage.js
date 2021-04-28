@@ -23,9 +23,6 @@ function DirectoryPage() {
 	const tab = useRouteParameter('tab');
 	const directoryRoute = useRoute('directory');
 
-	console.log('context', context)
-	console.log('id', id)
-
 	useEffect(() => {
 		if (routeName !== 'directory') {
 			return;
