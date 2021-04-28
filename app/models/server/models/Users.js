@@ -833,6 +833,21 @@ export class Users extends Base {
 		return this.findByActiveUsersExcept(searchTerm, exceptions, options, forcedSearchFields, extraQuery);
 	}
 
+	findByActiveLocalPeersSupporter(searchTerm, exceptions, options, forcedSearchFields, localDomain) {
+		const roles = [].concat('Peer Supporter');
+
+		const extraQuery = [
+			{
+				roles: { $in: roles },
+				$or: [
+					{ federation: { $exists: false } },
+					{ 'federation.origin': localDomain },
+				],
+			},
+		];
+		return this.findByActiveUsersExcept(searchTerm, exceptions, options, forcedSearchFields, extraQuery);
+	}
+
 	findByActiveExternalUsersExcept(searchTerm, exceptions, options, forcedSearchFields, localDomain) {
 		const extraQuery = [
 			{ federation: { $exists: true } },
