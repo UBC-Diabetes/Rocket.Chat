@@ -23,9 +23,6 @@ function DirectoryPage() {
 	const directoryRoute = useRoute('directory');
 	const handleTabClick = useCallback((tab) => () => directoryRoute.push({ tab }), [directoryRoute]);
 
-	console.log('context', context)
-	console.log('id', id)
-
 	useEffect(() => {
 		if (!tab || (tab === 'external' && !federationEnabled)) {
 			return directoryRoute.replace({ tab: defaultTab });

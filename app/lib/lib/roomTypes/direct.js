@@ -46,9 +46,6 @@ export class DirectMessageRoomType extends RoomTypeConfig {
 	}
 
 	findRoom(identifier) {
-		if (!hasPermission('view-d-room')) {
-			return null;
-		}
 
 		const query = {
 			t: 'd',

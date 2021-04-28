@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { Box, Margins, Tag, Button, Icon } from '@rocket.chat/fuselage';
 import { css } from '@rocket.chat/css-in-js';
 
@@ -6,6 +6,7 @@ import { Meteor } from 'meteor/meteor';
 import { hasRole } from '../../../../../app/authorization';
 import { useTranslation } from '../../../../contexts/TranslationContext';
 import { useSetting } from '../../../../contexts/SettingsContext';
+import { useRoute } from '../../../../contexts/RouterContext';
 import { ReactiveUserStatus } from '../../../../components/UserStatus';
 import UserCard from '../../../../components/UserCard';
 import VerticalBar from '../../../../components/VerticalBar';
@@ -20,6 +21,8 @@ import { AsyncStatePhase } from '../../../../hooks/useAsyncState';
 import { getUserEmailAddress } from '../../../../lib/getUserEmailAddress';
 import { FormSkeleton } from '../../../../components/Skeleton';
 import { getUserEmailVerified } from '../../../../lib/getUserEmailVerified';
+import { useUpdateCustomFields } from './../../../../hooks/useUpdateCustomFields';
+
 
 const Label = (props) => <Box fontScale='p2' color='default' {...props} />;
 
@@ -32,6 +35,7 @@ const Avatar = ({ username, ...props }) => <UserAvatar title={username} username
 const Username = ({ username, status, ...props }) => <UserCard.Username name={username} status={status} {...props}/>;
 
 export const UserInfo = React.memo(function UserInfo({
+	id,
 	username,
 	bio,
 	email,
@@ -57,8 +61,39 @@ export const UserInfo = React.memo(function UserInfo({
 	const timeAgo = useTimeAgo();
 
 	const uid = Meteor.userId();
+	const user = Meteor.user();
 	const isAdmin = hasRole(uid, ['admin']);
+	const directRoute = useRoute('direct');
 	const isPeerSupporter = customFields.VideoUrl !== undefined && customFields.VideoUrl !== '';
+
+	const peerIds = (user === null || user.customFields === null || user.customFields === undefined || user.customFields.ConnectIds === undefined || user.customFields.ConnectIds === '')
+		? [] 
+		: user.customFields.ConnectIds.split(",");
+
+	const [canConnect, setCanConnect] = useState((!peerIds.includes(username)) && peerIds.length < 5 && !isAdmin);
+	const [isConnected, setIsConnected] = useState(peerIds.includes(username) && !isAdmin);
+
+	console.log('1', user.customFields);
+	if (user !== null && user.customFields != undefined && user.customFields !== null) {
+		console.log('1 enters');
+		user.customFields.ConnectIds = user.customFields.ConnectIds === undefined || user.customFields.ConnectIds === ''
+		? username 
+		: `${user.customFields.ConnectIds},${username}`;
+	}
+
+	console.log('2');
+	const updateCustomFields = isAdmin ? null : useUpdateCustomFields(user.customFields);
+	console.log('3');
+
+	async function connectCliked() {
+		var result = await updateCustomFields(user.customFields);
+		setCanConnect(false);
+		setIsConnected(true);
+	}
+
+	const directMessageClick = useCallback(() => directRoute.push({
+		rid: username,
+	}), [directRoute, username]);
 	
 	return <VerticalBar.ScrollableContent p='x24' {...props}>
 
@@ -81,6 +116,18 @@ export const UserInfo = React.memo(function UserInfo({
 				<Avatar size={'x332'} username={username} etag={data?.avatarETag}/>	
 			)}
 		</Box>
+
+		{canConnect && (
+			<Button title={'Connect'} mi='x4' onClick={connectCliked}>
+				Connect
+			</Button>
+		)}
+
+			{isConnected && (
+			<Button title={'Message'} mi='x4' onClick={directMessageClick}>
+				Message
+			</Button>
+		)}
 
 		{actions}
 
@@ -207,6 +254,7 @@ export const UserInfoWithData = React.memo(function UserInfoWithData({ uid, user
 		} = user;
 
 		return {
+			id: _id,
 			name: showRealNames ? name : username,
 			username,
 			lastLogin,
