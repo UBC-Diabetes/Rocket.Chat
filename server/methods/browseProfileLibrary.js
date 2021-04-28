@@ -79,11 +79,6 @@ Meteor.methods({
 			return;
 		}
 
-		// type === users
-		if (!hasPermission(user._id, 'view-outside-room') || !hasPermission(user._id, 'view-d-room')) {
-			return;
-		}
-
 		const forcedSearchFields = workspace === 'all' && ['username', 'name', 'emails.address'];
 
 		const viewFullOtherUserInfo = hasPermission(user._id, 'view-full-other-user-info');
@@ -110,7 +105,7 @@ Meteor.methods({
 		} else if (workspace === 'external') {
 			result = Users.findByActiveExternalUsersExcept(text, [], options, forcedSearchFields, getFederationDomain());
 		} else {
-			result = Users.findByActiveLocalUsersExcept(text, [], options, forcedSearchFields, getFederationDomain());
+			result = Users.findByActiveLocalPeersSupporter(text, [], options, forcedSearchFields, getFederationDomain());
 		}
 
 		const total = result.count(); // count ignores the `skip` and `limit` options

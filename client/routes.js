@@ -103,6 +103,16 @@ FlowRouter.route('/directory/:tab?', {
 	}],
 });
 
+FlowRouter.route('/directory/:tab?/:context?/:id?', {
+	name: 'directory',
+	action: () => {
+		renderRouteComponent(() => import('./views/directory/DirectoryPage'), { template: 'main', region: 'center' });
+	},
+	triggersExit: [function() {
+		$('.main-content').addClass('rc-old');
+	}],
+});//directory/profileLibrary
+
 FlowRouter.route('/omnichannel-directory/:tab?/:context?/:id?', {
 	name: 'omnichannel-directory',
 	action: () => {

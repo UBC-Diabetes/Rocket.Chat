@@ -41,7 +41,6 @@ export const UserInfo = React.memo(function UserInfo({
 	phone,
 	customStatus,
 	roles = [],
-	rawroles = [],
 	lastLogin,
 	createdAt,
 	utcOffset,
@@ -59,8 +58,8 @@ export const UserInfo = React.memo(function UserInfo({
 
 	const uid = Meteor.userId();
 	const isAdmin = hasRole(uid, ['admin']);
-	const isPeerSupporter = rawroles.indexOf('Peer Supporter') > -1;
-
+	const isPeerSupporter = customFields.VideoUrl !== undefined && customFields.VideoUrl !== '';
+	
 	return <VerticalBar.ScrollableContent p='x24' {...props}>
 
 		<Box alignSelf='center'>
@@ -91,7 +90,10 @@ export const UserInfo = React.memo(function UserInfo({
 
 			{isAdmin && !!roles && <>
 				<Label>{t('Roles')}</Label>
-				<UserCard.Roles>{roles}</UserCard.Roles>
+				<UserCard.Roles>{roles.map((role, index) => (
+					<UserCard.Role key={index}>{role}</UserCard.Role>
+				))}
+				</UserCard.Roles>
 			</>}
 
 			{isAdmin && Number.isInteger(utcOffset) && <>
@@ -140,10 +142,15 @@ export const UserInfo = React.memo(function UserInfo({
 				</Info>
 			</>}
 
-			{ customFields && Object.entries(customFields).map(([label, value]) => <React.Fragment key={label}>
-				<Label>{t(label)}</Label>
-				<Info>{value}</Info>
-			</React.Fragment>) }
+			{ customFields && Object.entries(customFields).map(([label, value]) => { 
+				return !isAdmin && label === 'VideoUrl' 
+				? (<></>) 
+				: (
+				<React.Fragment key={label}>
+					<Label>{t(label)}</Label>
+					<Info>{value}</Info>
+				</React.Fragment>);
+				})}
 
 			{isAdmin && <>
 			<Label>{t('Created_at')}</Label>
@@ -191,7 +198,6 @@ export const UserInfoWithData = React.memo(function UserInfoWithData({ uid, user
 			name,
 			username,
 			roles = [],
-			rawroles = [],
 			status = null,
 			statusText,
 			bio,
@@ -204,10 +210,7 @@ export const UserInfoWithData = React.memo(function UserInfoWithData({ uid, user
 			name: showRealNames ? name : username,
 			username,
 			lastLogin,
-			roles: roles && getRoles(roles).map((role, index) => (
-				<UserCard.Role key={index}>{role}</UserCard.Role>
-			)),
-			rawroles: roles && getRoles(roles),
+			roles: roles && getRoles(roles),
 			bio,
 			phone: user.phone,
 			customFields: user.customFields,
