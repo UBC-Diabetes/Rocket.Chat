@@ -73,17 +73,13 @@ export const UserInfo = React.memo(function UserInfo({
 	const [canConnect, setCanConnect] = useState((!peerIds.includes(username)) && peerIds.length < 5 && !isAdmin);
 	const [isConnected, setIsConnected] = useState(peerIds.includes(username) && !isAdmin);
 
-	console.log('1', user.customFields);
 	if (user !== null && user.customFields != undefined && user.customFields !== null) {
-		console.log('1 enters');
 		user.customFields.ConnectIds = user.customFields.ConnectIds === undefined || user.customFields.ConnectIds === ''
 		? username 
 		: `${user.customFields.ConnectIds},${username}`;
 	}
 
-	console.log('2');
 	const updateCustomFields = isAdmin ? null : useUpdateCustomFields(user.customFields);
-	console.log('3');
 
 	async function connectCliked() {
 		var result = await updateCustomFields(user.customFields);
