@@ -101,9 +101,9 @@ Meteor.methods({
 
 		let result;
 		if (workspace === 'all') {
-			result = Users.findByActiveUsersExcept(text, [], options, forcedSearchFields);
+			result = Users.findPeersSupporterByActiveExternalUsersExcept(text, [], options, forcedSearchFields);
 		} else if (workspace === 'external') {
-			result = Users.findByActiveExternalUsersExcept(text, [], options, forcedSearchFields, getFederationDomain());
+			result = Users.findPeersSupporterByActiveExternalUsersExcept(text, [], options, forcedSearchFields, getFederationDomain());
 		} else {
 			result = Users.findByActiveLocalPeersSupporter(text, [], options, forcedSearchFields, getFederationDomain());
 		}
