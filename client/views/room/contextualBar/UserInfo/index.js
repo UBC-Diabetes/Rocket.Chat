@@ -186,7 +186,7 @@ export const UserInfo = React.memo(function UserInfo({
 			</>}
 
 			{ customFields && Object.entries(customFields).map(([label, value]) => { 
-				return !isAdmin && label === 'VideoUrl' 
+				return (!isAdmin && label === 'VideoUrl') || (!isAdmin && label === 'ConnectIds')
 				? (<></>) 
 				: (
 				<React.Fragment key={label}>
