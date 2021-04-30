@@ -797,6 +797,29 @@ export class Users extends Base {
 		return this.findByActiveUsersExcept(searchTerm, exceptions, options, forcedSearchFields, extraQuery);
 	}
 
+	findPeersSupporterByActiveExternalUsersExcept(searchTerm, exceptions, options, forcedSearchFields, localDomain) {
+		const roles = [].concat('Peer Supporter');
+
+		const extraQuery = [
+			{ roles: { $in: roles } },
+			{ federation: { $exists: true } },
+			{ 'federation.origin': { $ne: localDomain } },
+		];
+		return this.findByActiveUsersExcept(searchTerm, exceptions, options, forcedSearchFields, extraQuery);
+	}
+
+
+	findPeersSupporterByActiveExternalUsersExcept(searchTerm, exceptions, options, forcedSearchFields, localDomain) {
+		const roles = [].concat('Peer Supporter');
+
+		const extraQuery = [
+			{ roles: { $in: roles } },
+			{ federation: { $exists: true } },
+			{ 'federation.origin': { $ne: localDomain } },
+		];
+		return this.findByActiveUsersExcept(searchTerm, exceptions, options, forcedSearchFields, extraQuery);
+	}
+
 	findByActiveExternalUsersExcept(searchTerm, exceptions, options, forcedSearchFields, localDomain) {
 		const extraQuery = [
 			{ federation: { $exists: true } },
@@ -804,6 +827,7 @@ export class Users extends Base {
 		];
 		return this.findByActiveUsersExcept(searchTerm, exceptions, options, forcedSearchFields, extraQuery);
 	}
+
 
 	findUsersByNameOrUsername(nameOrUsername, options) {
 		const query = {
