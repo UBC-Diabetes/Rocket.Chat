@@ -20,53 +20,32 @@ const CustomNumericInput = ({ name, required, setState, state, className }) => {
 		return errors.join(', ');
 	}, [state, required, t]);
 
-	const validateNumericInput = (e) => {
-		const {value} = e.target;
-		if (!Number(value)) {
-			return;
-		}
+	return useMemo(
+		() => (
+			<Field className={className}>
+				<Field.Label>{t(name)}</Field.Label>
+				<Field.Row>
+					<TextInput
+						name={name}
+						error={verify}
+						flexGrow={1}
+						value={state}
+						required={required}
+						onChange={(e) => {
+							const { value } = e.target;
+							if (!Number(value)) {
+								return;
+							}
 
-		setState(value);
-	};
-
-	return useMemo(() => <Field className={className}>
-		<Field.Label>{t(name)}</Field.Label>
-		<Field.Row>
-			<TextInput name={name} error={verify} flexGrow={1} value={state} required={required} onChange={validateNumericInput}/>
-		</Field.Row>
-		<Field.Error>{verify}</Field.Error>
-	</Field>, [className, t, name, verify, state, required, setState]);
-};
-
-const CustomNumericInput = ({ name, required, setState, state, className }) => {
-	const t = useTranslation();
-
-	const verify = useMemo(() => {
-		const errors = [];
-
-		if (!state && required) {
-			errors.push(t('Field_required'));
-		}
-
-		return errors.join(', ');
-	}, [state, required, t]);
-
-	const validateNumericInput = (e) => {
-		const {value} = e.target;
-		if (!Number(value)) {
-			return;
-		}
-
-		setState(value);
-	};
-
-	return useMemo(() => <Field className={className}>
-		<Field.Label>{t(name)}</Field.Label>
-		<Field.Row>
-			<TextInput name={name} error={verify} flexGrow={1} value={state} required={required} onChange={validateNumericInput}/>
-		</Field.Row>
-		<Field.Error>{verify}</Field.Error>
-	</Field>, [className, t, name, verify, state, required, setState]);
+							setState(value);
+						}}
+					/>
+				</Field.Row>
+				<Field.Error>{verify}</Field.Error>
+			</Field>
+		),
+		[className, t, name, verify, state, required, setState],
+	);
 };
 
 const CustomTextInput = ({
@@ -206,8 +185,9 @@ const CustomFieldsAssembler = ({ formValues, formHandlers, customFields, ...prop
 		}
 
 		if (value.type === 'numeric') {
-		return <CustomNumericInput {...extraProps} {...props}/>;
-	}return null;
+			return <CustomNumericInput {...extraProps} {...props} />;
+		}
+		return null;
 	});
 
 export default function CustomFieldsForm({
