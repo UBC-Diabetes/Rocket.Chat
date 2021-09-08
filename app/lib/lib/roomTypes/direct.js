@@ -4,7 +4,7 @@ import { Session } from 'meteor/session';
 import { ChatRoom, Subscriptions } from '../../../models';
 import { openRoom } from '../../../ui-utils';
 import { getUserPreference, RoomTypeConfig, RoomTypeRouteConfig, RoomSettingsEnum, RoomMemberActions, UiTextContext } from '../../../utils';
-import { hasPermission, hasAtLeastOnePermission } from '../../../authorization';
+import { hasAtLeastOnePermission } from '../../../authorization';
 import { settings } from '../../../settings';
 import { getUserAvatarURL } from '../../../utils/lib/getUserAvatarURL';
 import { getAvatarURL } from '../../../utils/lib/getAvatarURL';
@@ -46,7 +46,6 @@ export class DirectMessageRoomType extends RoomTypeConfig {
 	}
 
 	findRoom(identifier) {
-
 		const query = {
 			t: 'd',
 			$or: [

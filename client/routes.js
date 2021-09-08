@@ -111,7 +111,7 @@ FlowRouter.route('/directory/:tab?/:context?/:id?', {
 	triggersExit: [function() {
 		$('.main-content').addClass('rc-old');
 	}],
-});//directory/profileLibrary
+});// directory/profileLibrary
 
 FlowRouter.route('/omnichannel-directory/:tab?/:context?/:id?', {
 	name: 'omnichannel-directory',

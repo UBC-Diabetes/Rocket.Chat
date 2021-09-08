@@ -1,8 +1,8 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import { Box, Margins, Tag, Button, Icon } from '@rocket.chat/fuselage';
 import { css } from '@rocket.chat/css-in-js';
-
 import { Meteor } from 'meteor/meteor';
+
 import { hasRole } from '../../../../../app/authorization';
 import { useTranslation } from '../../../../contexts/TranslationContext';
 import { useSetting } from '../../../../contexts/SettingsContext';
@@ -21,7 +21,7 @@ import { AsyncStatePhase } from '../../../../hooks/useAsyncState';
 import { getUserEmailAddress } from '../../../../lib/getUserEmailAddress';
 import { FormSkeleton } from '../../../../components/Skeleton';
 import { getUserEmailVerified } from '../../../../lib/getUserEmailVerified';
-import { useUpdateCustomFields } from './../../../../hooks/useUpdateCustomFields';
+import { useUpdateCustomFields } from '../../../../hooks/useUpdateCustomFields';
 
 
 const Label = (props) => <Box fontScale='p2' color='default' {...props} />;
@@ -34,6 +34,7 @@ const Info = ({ className, ...props }) => <UserCard.Info className={[className, 
 const Avatar = ({ username, ...props }) => <UserAvatar title={username} username={username} {...props}/>;
 const Username = ({ username, status, ...props }) => <UserCard.Username name={username} status={status} {...props}/>;
 
+// eslint-disable-next-line complexity
 export const UserInfo = React.memo(function UserInfo({
 	id,
 	username,
@@ -66,23 +67,23 @@ export const UserInfo = React.memo(function UserInfo({
 	const directRoute = useRoute('direct');
 	const isPeerSupporter = customFields.VideoUrl !== undefined && customFields.VideoUrl !== '';
 
-	const peerIds = (user === null || user.customFields === null || user.customFields === undefined || user.customFields.ConnectIds === undefined || user.customFields.ConnectIds === '')
-		? [] 
-		: user.customFields.ConnectIds.split(",");
+	const peerIds = user === null || user.customFields === null || user.customFields === undefined || user.customFields.ConnectIds === undefined || user.customFields.ConnectIds === ''
+		? []
+		: user.customFields.ConnectIds.split(',');
 
-	const [canConnect, setCanConnect] = useState((!peerIds.includes(username)) && peerIds.length < 5 && !isAdmin);
+	const [canConnect, setCanConnect] = useState(!peerIds.includes(username) && peerIds.length < 5 && !isAdmin);
 	const [isConnected, setIsConnected] = useState(peerIds.includes(username) && !isAdmin);
 
-	if (user !== null && user.customFields != undefined && user.customFields !== null) {
+	if (user !== null && user.customFields !== undefined && user.customFields !== null) {
 		user.customFields.ConnectIds = user.customFields.ConnectIds === undefined || user.customFields.ConnectIds === ''
-		? username 
-		: `${user.customFields.ConnectIds},${username}`;
+			? username
+			: `${ user.customFields.ConnectIds },${ username }`;
 	}
 
-	const updateCustomFields = isAdmin ? null : useUpdateCustomFields(user.customFields);
+	const updateCustomFields = useUpdateCustomFields(user.customFields);
 
-	async function connectCliked() {
-		var result = await updateCustomFields(user.customFields);
+	async function connectClicked() {
+		await updateCustomFields();
 		setCanConnect(false);
 		setIsConnected(true);
 	}
@@ -90,36 +91,36 @@ export const UserInfo = React.memo(function UserInfo({
 	const directMessageClick = useCallback(() => directRoute.push({
 		rid: username,
 	}), [directRoute, username]);
-	
+
 	return <VerticalBar.ScrollableContent p='x24' {...props}>
 
 		<Box alignSelf='center'>
 			{ isPeerSupporter ? (
 				<>
-				 <div className="video-responsive">
-				 <iframe
-				   width="380"
-				   height="240"
-				   src={customFields.VideoUrl}
-				   frameBorder="0"
-				   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-				   allowFullScreen
-				   title="Embedded youtube"
-				 />
-			   </div>
-			   </>
+					<div className='video-responsive'>
+						<iframe
+							width='380'
+							height='240'
+							src={customFields.VideoUrl}
+							frameBorder='0'
+							allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture'
+							allowFullScreen
+							title='Embedded youtube'
+						/>
+					</div>
+				</>
 			) : (
-				<Avatar size={'x332'} username={username} etag={data?.avatarETag}/>	
+				<Avatar size={'x332'} username={username} etag={data?.avatarETag}/>
 			)}
 		</Box>
 
 		{canConnect && (
-			<Button title={'Connect'} mi='x4' onClick={connectCliked}>
+			<Button title={'Connect'} mi='x4' onClick={connectClicked}>
 				Connect
 			</Button>
 		)}
 
-			{isConnected && (
+		{isConnected && (
 			<Button title={'Message'} mi='x4' onClick={directMessageClick}>
 				Message
 			</Button>
@@ -128,7 +129,7 @@ export const UserInfo = React.memo(function UserInfo({
 		{actions}
 
 		<Margins block='x4'>
-			<UserCard.Username name={(showRealNames && name) || username || name} status={status} />
+			<UserCard.Username name={(showRealNames && name) || username || name} status={status}/>
 			<Info>{customStatus}</Info>
 
 			{isAdmin && !!roles && <>
@@ -150,8 +151,8 @@ export const UserInfo = React.memo(function UserInfo({
 			</>}
 
 			{isAdmin && <>
-			<Label>{t('Last_login')}</Label>
-			<Info>{lastLogin ? timeAgo(lastLogin) : t('Never')}</Info>
+				<Label>{t('Last_login')}</Label>
+				<Info>{lastLogin ? timeAgo(lastLogin) : t('Never')}</Info>
 			</>}
 
 			{name && <>
@@ -185,19 +186,17 @@ export const UserInfo = React.memo(function UserInfo({
 				</Info>
 			</>}
 
-			{ customFields && Object.entries(customFields).map(([label, value]) => { 
-				return (!isAdmin && label === 'VideoUrl') || (!isAdmin && label === 'ConnectIds')
-				? (<></>) 
+			{customFields && Object.entries(customFields).map(([label, value]) => ((!isAdmin && label === 'VideoUrl') || (!isAdmin && label === 'ConnectIds')
+				? (<></>)
 				: (
-				<React.Fragment key={label}>
-					<Label>{t(label)}</Label>
-					<Info>{value}</Info>
-				</React.Fragment>);
-				})}
+					<React.Fragment key={label}>
+						<Label>{t(label)}</Label>
+						<Info>{value}</Info>
+					</React.Fragment>)))}
 
 			{isAdmin && <>
-			<Label>{t('Created_at')}</Label>
-			<Info>{timeAgo(createdAt)}</Info>
+				<Label>{t('Created_at')}</Label>
+				<Info>{timeAgo(createdAt)}</Info>
 			</>}
 
 		</Margins>

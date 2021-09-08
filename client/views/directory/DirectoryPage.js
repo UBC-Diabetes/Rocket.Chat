@@ -35,31 +35,31 @@ function DirectoryPage() {
 
 	return <Page flexDirection='row'>
 		<Page>
-		<Page.Header title={t('Directory')} />
-		<Tabs flexShrink={0} >
-			<Tabs.Item selected={tab === 'channels'} onClick={handleTabClick('channels')}>{t('Channels')}</Tabs.Item>
-			<Tabs.Item selected={tab === 'users'} onClick={handleTabClick('users')}>{t('Users')}</Tabs.Item>
-			<Tabs.Item selected={tab === 'profileLibrary'} onClick={handleTabClick('profileLibrary')}>{t('Peer Supporter Library')}</Tabs.Item>
-			{ federationEnabled && <Tabs.Item selected={tab === 'external'} onClick={handleTabClick('external')}>{t('External_Users')}</Tabs.Item> }
-		</Tabs>
-		<Page.Content>
-			{
-				(tab === 'users' && <UserTab />)
+			<Page.Header title={t('Directory')} />
+			<Tabs flexShrink={0} >
+				<Tabs.Item selected={tab === 'channels'} onClick={handleTabClick('channels')}>{t('Channels')}</Tabs.Item>
+				<Tabs.Item selected={tab === 'users'} onClick={handleTabClick('users')}>{t('Users')}</Tabs.Item>
+				<Tabs.Item selected={tab === 'profileLibrary'} onClick={handleTabClick('profileLibrary')}>{t('Peer Supporter Library')}</Tabs.Item>
+				{ federationEnabled && <Tabs.Item selected={tab === 'external'} onClick={handleTabClick('external')}>{t('External_Users')}</Tabs.Item> }
+			</Tabs>
+			<Page.Content>
+				{
+					(tab === 'users' && <UserTab />)
 			|| (tab === 'channels' && <ChannelsTab />)
 			|| (tab === 'profileLibrary' && <ProfileLibraryTab />)
 			|| (federationEnabled && tab === 'external' && <UserTab workspace='external' />)
-			}
+				}
 
-		</Page.Content>
-	</Page>
-	{context && <VerticalBar>
-		<VerticalBar.Header>
-			{context === 'info' && t('User_Info')}
-			<VerticalBar.Close onClick={handleVerticalBarCloseButtonClick} />
-		</VerticalBar.Header>
-		{context === 'info' && <UserInfoWithData uid={id}/>}
-	</VerticalBar>};
-	</Page>
+			</Page.Content>
+		</Page>
+		{context && <VerticalBar>
+			<VerticalBar.Header>
+				{context === 'info' && t('User_Info')}
+				<VerticalBar.Close onClick={handleVerticalBarCloseButtonClick} />
+			</VerticalBar.Header>
+			{context === 'info' && <UserInfoWithData uid={id}/>}
+		</VerticalBar>};
+	</Page>;
 }
 
 

@@ -1,31 +1,11 @@
 import { Meteor } from 'meteor/meteor';
 import { DDPRateLimiter } from 'meteor/ddp-rate-limiter';
-import s from 'underscore.string';
 
 import { hasPermission } from '../../app/authorization';
-import { Rooms, Users } from '../../app/models';
-import { settings } from '../../app/settings/server';
+import { Users } from '../../app/models';
 import { getFederationDomain } from '../../app/federation/server/lib/getFederationDomain';
 import { isFederationEnabled } from '../../app/federation/server/lib/isFederationEnabled';
-import { hasRole } from '../../app/authorization';
 import { federationSearchUsers } from '../../app/federation/server/handler';
-
-const sortChannels = function(field, direction) {
-	switch (field) {
-		case 'createdAt':
-			return {
-				ts: direction === 'asc' ? 1 : -1,
-			};
-		case 'lastMessage':
-			return {
-				'lastMessage.ts': direction === 'asc' ? 1 : -1,
-			};
-		default:
-			return {
-				[field]: direction === 'asc' ? 1 : -1,
-			};
-	}
-};
 
 const sortUsers = function(field, direction) {
 	switch (field) {
@@ -43,8 +23,6 @@ const sortUsers = function(field, direction) {
 
 Meteor.methods({
 	browseProfileLibrary({ text = '', workspace = '', type = 'channels', sortBy = 'name', sortDirection = 'asc', page, offset, limit = 10 }) {
-		const regex = new RegExp(s.trim(s.escapeRegExp(text)), 'i');
-
 		if (!['channels', 'users'].includes(type)) {
 			return;
 		}
@@ -70,7 +48,6 @@ Meteor.methods({
 			limit,
 		};
 
-		const canViewAnonymous = settings.get('Accounts_AllowAnonymousRead') === true;
 
 		const user = Meteor.user();
 
@@ -94,8 +71,8 @@ Meteor.methods({
 				createdAt: 1,
 				...viewFullOtherUserInfo && { emails: 1 },
 				federation: 1,
-                avatarETag: 1,
-                roles: 1,
+				avatarETag: 1,
+				roles: 1,
 			},
 		};
 
@@ -129,8 +106,8 @@ Meteor.methods({
 					isRemote: true,
 				});
 			}
-        }
-        
+		}
+
 		return {
 			total,
 			results,

@@ -22,7 +22,7 @@ export const UserInfoActions = ({ username, _id, isActive, isAdmin, onChange }) 
 	const userRoute = useRoute('admin-users');
 	const dispatchToastMessage = useToastMessageDispatch();
 
-	const canDirectMessage = isAdmin;//usePermission('create-d');
+	const canDirectMessage = isAdmin;// usePermission('create-d');
 	const canEditOtherUserInfo = usePermission('edit-other-user-info');
 	const canAssignAdminRole = usePermission('assign-admin-role');
 	const canResetE2EEKey = usePermission('edit-other-user-e2ee');

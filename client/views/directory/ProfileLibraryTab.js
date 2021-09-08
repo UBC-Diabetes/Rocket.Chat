@@ -6,7 +6,6 @@ import UserAvatar from '../../components/avatar/UserAvatar';
 import MarkdownText from '../../components/MarkdownText';
 import FilterByText from '../../components/FilterByText';
 import GenericTable from '../../components/GenericTable';
-import NotAuthorizedPage from '../../components/NotAuthorizedPage';
 import { usePermission } from '../../contexts/AuthorizationContext';
 import { useRoute } from '../../contexts/RouterContext';
 import { useTranslation } from '../../contexts/TranslationContext';
@@ -52,10 +51,10 @@ function UserTable({
 	const onClick = useCallback((username) => (e) => {
 		if (e.type === 'click' || e.key === 'Enter') {
 			userRout.push({
-                tab: 'profileLibrary',
-                context: 'info',
-                id: username,
-            })
+				tab: 'profileLibrary',
+				context: 'info',
+				id: username,
+			});
 		}
 	}, [userRout]);
 

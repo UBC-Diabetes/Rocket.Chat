@@ -19,18 +19,16 @@ const CustomNumericInput = ({ name, required, setState, state, className }) => {
 		return errors.join(', ');
 	}, [state, required, t]);
 
-	const validateNumericInput = (e) => { 
-		const {value} = e.target;
-		if (!Number(value)) {
-			return;
-		}
-		setState(value); 
-	};
-
 	return useMemo(() => <Field className={className}>
 		<Field.Label>{t(name)}</Field.Label>
 		<Field.Row>
-			<TextInput name={name} error={verify} flexGrow={1} value={state} required={required} onChange={validateNumericInput}/>
+			<TextInput name={name} error={verify} flexGrow={1} value={state} required={required} onChange={(e) => {
+				const { value } = e.target;
+				if (!Number(value)) {
+					return;
+				}
+				setState(value);
+			}}/>
 		</Field.Row>
 		<Field.Error>{verify}</Field.Error>
 	</Field>, [className, t, name, verify, state, required, setState]);
