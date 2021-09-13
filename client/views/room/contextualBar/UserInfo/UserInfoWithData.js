@@ -15,7 +15,7 @@ import { getUserEmailVerified } from '../../../../lib/getUserEmailVerified';
 import UserInfo from './UserInfo';
 import UserActions from './actions/UserActions';
 
-function UserInfoWithData({
+const UserInfoWithData = ({
 	uid,
 	username,
 	tabBar,
@@ -25,7 +25,7 @@ function UserInfoWithData({
 	video,
 	onClickBack,
 	...props
-}) {
+}) => {
 	const t = useTranslation();
 
 	const getRoles = useRolesDescription();
@@ -109,6 +109,6 @@ function UserInfoWithData({
 				)}
 		</>
 	);
-}
+};
 
 export default UserInfoWithData;
