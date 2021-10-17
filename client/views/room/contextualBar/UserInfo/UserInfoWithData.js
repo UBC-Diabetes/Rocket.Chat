@@ -109,6 +109,6 @@ function UserInfoWithData({
 				)}
 		</>
 	);
-};
+}
 
 export default UserInfoWithData;

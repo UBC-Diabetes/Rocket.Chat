@@ -12,26 +12,26 @@ import InfoPanel from '../../../InfoPanel';
 import Avatar from './Avatar';
 
 function UserInfo({
-										username,
-										bio,
-										canViewAllInfo,
-										email,
-										verified,
-										showRealNames,
-										status,
-										phone,
-										customStatus,
-										roles = [],
-										lastLogin,
-										createdAt,
-										utcOffset,
-										customFields = [],
-										name,
-										data,
-										nickname,
-										actions,
-										...props
-									}) {
+	username,
+	bio,
+	canViewAllInfo,
+	email,
+	verified,
+	showRealNames,
+	status,
+	phone,
+	customStatus,
+	roles = [],
+	lastLogin,
+	createdAt,
+	utcOffset,
+	customFields = [],
+	name,
+	data,
+	nickname,
+	actions,
+	...props
+}) {
 	const t = useTranslation();
 	const timeAgo = useTimeAgo();
 	const customFieldsToShowSetting = useSetting('Accounts_CustomFieldsToShowInUserInfo');
@@ -44,12 +44,12 @@ function UserInfo({
 
 	const customFieldsToShow = customFieldsToShowObj
 		? Object.values(customFieldsToShowObj).map((value) => {
-			const role = Object.values(value);
-			const roleNameToShow = Object.keys(value);
-			const customField = {};
-			customField[roleNameToShow] = customFields[role];
-			return customField;
-		})
+				const role = Object.values(value);
+				const roleNameToShow = Object.keys(value);
+				const customField = {};
+				customField[roleNameToShow] = customFields[role];
+				return customField;
+		  })
 		: [];
 
 	return (
