@@ -44,7 +44,7 @@ function saveUserProfile(settings, customFields) {
 	}
 
 	if (settings.bio != null) {
-		if (typeof settings.bio !== 'string' || settings.bio.length > 260) {
+		if (typeof settings.bio !== 'string' || settings.bio.length > 768) {
 			throw new Meteor.Error('error-invalid-field', 'bio', {
 				method: 'saveUserProfile',
 			});
