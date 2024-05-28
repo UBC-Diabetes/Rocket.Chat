@@ -1,9 +1,9 @@
 import { Box } from '@rocket.chat/fuselage';
 import React, { FC } from 'react';
 
-import { useTranslation } from '../contexts/TranslationContext';
 import GenericModal from './GenericModal';
 import RawText from './RawText';
+import { useTranslation } from '../contexts/TranslationContext';
 
 type ConfirmOwnerChangeWarningModalProps = {
 	onConfirm: () => void;

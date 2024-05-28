@@ -2,6 +2,7 @@ import { Box, Margins, ButtonGroup } from '@rocket.chat/fuselage';
 import React, { memo } from 'react';
 import { useSubscription } from 'use-subscription';
 
+import AgentInfoAction from './AgentInfoAction';
 import { FormSkeleton } from '../../../components/Skeleton';
 import { UserStatus } from '../../../components/UserStatus';
 import VerticalBar from '../../../components/VerticalBar';
@@ -10,7 +11,6 @@ import { AsyncStatePhase } from '../../../hooks/useAsyncState';
 import { useEndpointData } from '../../../hooks/useEndpointData';
 import UserInfo from '../../room/contextualBar/UserInfo';
 import { formsSubscription } from '../additionalForms';
-import AgentInfoAction from './AgentInfoAction';
 
 export const AgentInfo = memo(function AgentInfo({ uid, children, ...props }) {
 	const t = useTranslation();

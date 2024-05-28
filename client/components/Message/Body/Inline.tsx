@@ -1,7 +1,6 @@
 import { Paragraph as ASTParagraph } from '@rocket.chat/message-parser';
 import React, { FC } from 'react';
 
-import Emoji from '../../Emoji';
 import Bold from './Bold';
 import InlineCode from './InlineCode';
 import Italic from './Italic';
@@ -10,6 +9,7 @@ import Mention from './Mention';
 import Plain from './Plain';
 import Strike from './Strike';
 import { UserMention } from './definitions/UserMention';
+import Emoji from '../../Emoji';
 
 const Inline: FC<{ value: ASTParagraph['value']; mentions?: UserMention[] }> = ({
 	value = [],

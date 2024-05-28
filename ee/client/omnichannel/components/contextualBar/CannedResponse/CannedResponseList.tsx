@@ -11,14 +11,14 @@ import React, {
 } from 'react';
 import { Virtuoso } from 'react-virtuoso';
 
+import Item from './Item';
+import WrapCannedResponse from './WrapCannedResponse';
 import ScrollableContentWrapper from '../../../../../../client/components/ScrollableContentWrapper';
 import VerticalBar from '../../../../../../client/components/VerticalBar';
 import { useTranslation } from '../../../../../../client/contexts/TranslationContext';
 import { useTabContext } from '../../../../../../client/views/room/providers/ToolboxProvider';
 import { ILivechatDepartment } from '../../../../../../definition/ILivechatDepartment';
 import { IOmnichannelCannedResponse } from '../../../../../../definition/IOmnichannelCannedResponse';
-import Item from './Item';
-import WrapCannedResponse from './WrapCannedResponse';
 
 const CannedResponseList: FC<{
 	loadMoreItems: (start: number, end: number) => void;

@@ -2,11 +2,11 @@ import { Box } from '@rocket.chat/fuselage';
 import _ from 'lodash';
 import React, { FC } from 'react';
 
-import { useTranslation } from '../../../../../../contexts/TranslationContext';
-import { SectionStatus } from '../Section';
 import { DNSRecordItem } from './DNSRecordItem';
 import { DNSText } from './DNSText';
 import { DNSRecord, DNSRecordName, DNSRecordType, ResolvedDNS, TXTRecordValue } from './Types';
+import { useTranslation } from '../../../../../../contexts/TranslationContext';
+import { SectionStatus } from '../Section';
 
 export const DNSRecords: FC<{
 	federationSubdomain: string;

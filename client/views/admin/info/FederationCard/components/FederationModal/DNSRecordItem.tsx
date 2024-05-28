@@ -1,9 +1,9 @@
 import { Box } from '@rocket.chat/fuselage';
 import React, { FC } from 'react';
 
+import { DNSRecord } from './Types';
 import { SectionStatus } from '../Section';
 import getStatusIcon from '../SectionStatusIcon';
-import { DNSRecord } from './Types';
 
 export const DNSRecordItem: FC<{
 	record: DNSRecord;

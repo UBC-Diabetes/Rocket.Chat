@@ -1,13 +1,13 @@
 import React, { FC, memo, MouseEvent } from 'react';
 
+import ThreadListMessage from './components/Message';
+import { mapProps } from './mapProps';
+import { normalizeThreadMessage } from './normalizeThreadMessage';
 import { call } from '../../../../../app/ui-utils/client';
 import { IMessage } from '../../../../../definition/IMessage';
 import { useTranslation } from '../../../../contexts/TranslationContext';
 import { useTimeAgo } from '../../../../hooks/useTimeAgo';
 import { clickableItem } from '../../../../lib/clickableItem';
-import ThreadListMessage from './components/Message';
-import { mapProps } from './mapProps';
-import { normalizeThreadMessage } from './normalizeThreadMessage';
 
 const Thread = memo(mapProps(clickableItem(ThreadListMessage)));
 

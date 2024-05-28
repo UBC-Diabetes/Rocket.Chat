@@ -14,12 +14,12 @@ import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import { parse as parseDomain, ParsedDomain } from 'psl';
 import React, { FC, ReactElement, useCallback, useState } from 'react';
 
-import { useSetting, useSettingSetValue } from '../../../../../../contexts/SettingsContext';
-import { useTranslation } from '../../../../../../contexts/TranslationContext';
-import { useForm } from '../../../../../../hooks/useForm';
 import { DNSRecords } from './DNSRecords';
 import InviteUsers from './InviteUsers';
 import { DNSRecordName, ResolvedDNS, TXTRecordValue } from './Types';
+import { useSetting, useSettingSetValue } from '../../../../../../contexts/SettingsContext';
+import { useTranslation } from '../../../../../../contexts/TranslationContext';
+import { useForm } from '../../../../../../hooks/useForm';
 
 export const FederationModal: FC<{ onClose: () => void }> = ({
 	onClose,

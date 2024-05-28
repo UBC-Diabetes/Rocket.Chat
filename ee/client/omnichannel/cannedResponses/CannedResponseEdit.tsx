@@ -2,6 +2,7 @@ import { Button, ButtonGroup, Icon, FieldGroup } from '@rocket.chat/fuselage';
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import React, { FC, memo, useState, useMemo, useEffect, useCallback } from 'react';
 
+import CannedResponseForm from './components/cannedResponseForm';
 import Page from '../../../../client/components/Page';
 import { usePermission } from '../../../../client/contexts/AuthorizationContext';
 import { useRoute } from '../../../../client/contexts/RouterContext';
@@ -11,7 +12,6 @@ import { CannedResponseEndpointGetReturn } from '../../../../client/contexts/Ser
 import { useToastMessageDispatch } from '../../../../client/contexts/ToastMessagesContext';
 import { useTranslation } from '../../../../client/contexts/TranslationContext';
 import { useForm } from '../../../../client/hooks/useForm';
-import CannedResponseForm from './components/cannedResponseForm';
 
 const CannedResponseEdit: FC<{
 	data?: CannedResponseEndpointGetReturn;

@@ -2,11 +2,11 @@
 import { Box } from '@rocket.chat/fuselage';
 import React, { useMemo } from 'react';
 
+import EditDepartment from './EditDepartment';
 import { FormSkeleton } from '../../../components/Skeleton';
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { AsyncStatePhase } from '../../../hooks/useAsyncState';
 import { useEndpointData } from '../../../hooks/useEndpointData';
-import EditDepartment from './EditDepartment';
 
 function EditDepartmentWithAllowedForwardData({ data, ...props }) {
 	const t = useTranslation();

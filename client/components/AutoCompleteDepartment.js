@@ -2,10 +2,10 @@ import { PaginatedSelectFiltered } from '@rocket.chat/fuselage';
 import { useDebouncedValue } from '@rocket.chat/fuselage-hooks';
 import React, { memo, useMemo, useState } from 'react';
 
+import { useDepartmentsList } from './Omnichannel/hooks/useDepartmentsList';
 import { useTranslation } from '../contexts/TranslationContext';
 import { useRecordList } from '../hooks/lists/useRecordList';
 import { AsyncStatePhase } from '../hooks/useAsyncState';
-import { useDepartmentsList } from './Omnichannel/hooks/useDepartmentsList';
 
 const AutoCompleteDepartment = (props) => {
 	const { value, onlyMyDepartments = false, onChange = () => {}, haveAll = false } = props;

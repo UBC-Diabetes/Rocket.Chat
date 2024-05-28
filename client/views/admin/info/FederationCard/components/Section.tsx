@@ -1,8 +1,8 @@
 import { Box } from '@rocket.chat/fuselage';
 import React, { FC, memo } from 'react';
 
-import Card from '../../../../../components/Card';
 import getStatusIcon from './SectionStatusIcon';
+import Card from '../../../../../components/Card';
 
 export enum SectionStatus {
 	UNKNOWN,

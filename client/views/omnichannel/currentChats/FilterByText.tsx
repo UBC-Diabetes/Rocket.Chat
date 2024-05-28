@@ -4,6 +4,8 @@ import moment from 'moment';
 import React, { Dispatch, FC, SetStateAction, useEffect, useMemo } from 'react';
 import { useSubscription } from 'use-subscription';
 
+import Label from './Label';
+import RemoveAllClosed from './RemoveAllClosed';
 import AutoCompleteAgent from '../../../components/AutoCompleteAgent';
 import AutoCompleteDepartment from '../../../components/AutoCompleteDepartment';
 import GenericModal from '../../../components/GenericModal';
@@ -13,8 +15,6 @@ import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext'
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { useEndpointData } from '../../../hooks/useEndpointData';
 import { formsSubscription } from '../additionalForms';
-import Label from './Label';
-import RemoveAllClosed from './RemoveAllClosed';
 
 type FilterByTextType = FC<{
 	setFilter: Dispatch<SetStateAction<any>>;

@@ -1,9 +1,9 @@
 import React from 'react';
 
-import { SettingsContext } from '../contexts/SettingsContext';
-import { UserContext } from '../contexts/UserContext';
 import RoomList from './RoomList/index';
 import Header from './header';
+import { SettingsContext } from '../contexts/SettingsContext';
+import { UserContext } from '../contexts/UserContext';
 
 export default {
 	title: 'Sidebar',

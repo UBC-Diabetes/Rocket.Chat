@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
-import { useTranslation } from '../contexts/TranslationContext';
 import { useEndpointAction } from './useEndpointAction';
+import { useTranslation } from '../contexts/TranslationContext';
 
 export const useUpdateCustomFields = (customFields) => {
 	const t = useTranslation();

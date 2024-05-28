@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { useForm } from '../../../../client/hooks/useForm';
 import BusinessHoursMultiple from './BusinessHoursMultiple';
+import { useForm } from '../../../../client/hooks/useForm';
 
 const mapDepartments = (departments) =>
 	departments.map(({ _id, name }) => ({ value: _id, label: name }));

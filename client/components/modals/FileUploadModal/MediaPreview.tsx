@@ -1,10 +1,10 @@
 import { Box, Icon } from '@rocket.chat/fuselage';
 import React, { ReactElement, useEffect, useState, memo } from 'react';
 
-import { useTranslation } from '../../../contexts/TranslationContext';
 import { FilePreviewType } from './FilePreview';
 import ImagePreview from './ImagePreview';
 import PreviewSkeleton from './PreviewSkeleton';
+import { useTranslation } from '../../../contexts/TranslationContext';
 
 type ReaderOnloadCallback = (url: FileReader['result']) => void;
 

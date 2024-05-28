@@ -5,6 +5,7 @@ import {
 } from '@rocket.chat/fuselage-hooks';
 import React, { useCallback, useMemo, useState } from 'react';
 
+import RoomMembers from './RoomMembers';
 import { useAtLeastOnePermission } from '../../../../../contexts/AuthorizationContext';
 import { useUserRoom } from '../../../../../contexts/UserContext';
 import { useRecordList } from '../../../../../hooks/lists/useRecordList';
@@ -14,7 +15,6 @@ import { useTabBarClose } from '../../../providers/ToolboxProvider';
 import UserInfoWithData from '../../UserInfo';
 import AddUsers from '../AddUsers';
 import InviteUsers from '../InviteUsers';
-import RoomMembers from './RoomMembers';
 
 const RoomMembersWithData = ({ rid }) => {
 	const [state, setState] = useState({});

@@ -1,9 +1,9 @@
 import React from 'react';
 
+import CloseChatModal from './CloseChatModal';
 import { AsyncStatePhase } from '../../../hooks/useAsyncState';
 import { useEndpointData } from '../../../hooks/useEndpointData';
 import { FormSkeleton } from '../Skeleton';
-import CloseChatModal from './CloseChatModal';
 
 const CloseChatModalData = ({ departmentId, onCancel, onConfirm }) => {
 	const { value: data, phase: state } = useEndpointData(

@@ -1,13 +1,13 @@
 import { Box, Select, Margins, Field, Label } from '@rocket.chat/fuselage';
 import React, { useMemo, useState, useEffect } from 'react';
 
-import AutoCompleteDepartment from '../../../components/AutoCompleteDepartment';
-import Page from '../../../components/Page';
-import { useTranslation } from '../../../contexts/TranslationContext';
 import AgentOverview from './AgentOverview';
 import DateRangePicker from './DateRangePicker';
 import InterchangeableChart from './InterchangeableChart';
 import Overview from './Overview';
+import AutoCompleteDepartment from '../../../components/AutoCompleteDepartment';
+import Page from '../../../components/Page';
+import { useTranslation } from '../../../contexts/TranslationContext';
 
 const useOptions = (type) => {
 	const t = useTranslation();

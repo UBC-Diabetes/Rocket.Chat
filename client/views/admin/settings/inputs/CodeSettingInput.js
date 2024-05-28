@@ -2,9 +2,9 @@ import { Box, Button, Field, Flex } from '@rocket.chat/fuselage';
 import { useToggle } from '@rocket.chat/fuselage-hooks';
 import React from 'react';
 
+import CodeMirror from './CodeMirror';
 import { useTranslation } from '../../../../contexts/TranslationContext';
 import ResetSettingButton from '../ResetSettingButton';
-import CodeMirror from './CodeMirror';
 
 function CodeSettingInput({
 	_id,

@@ -1,8 +1,8 @@
 import React from 'react';
 
-import ExtendedSkeleton from '../ExtendedSkeleton';
 import CondensedSkeleton from './CondensedSkeleton';
 import MediumSkeleton from './MediumSkeleton';
+import ExtendedSkeleton from '../ExtendedSkeleton';
 
 export default {
 	title: 'Sidebar/Skeleton',

@@ -13,6 +13,7 @@ import {
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import React, { ReactElement } from 'react';
 
+import DefaultParentRoomField from './DefaultParentRoomField';
 import { IMessage } from '../../../definition/IMessage';
 import { IRoom } from '../../../definition/IRoom';
 import { IUser } from '../../../definition/IUser';
@@ -22,7 +23,6 @@ import { useForm } from '../../hooks/useForm';
 import { goToRoomById } from '../../lib/goToRoomById';
 import RoomAutoComplete from '../RoomAutoComplete';
 import UserAutoCompleteMultiple from '../UserAutoCompleteMultiple';
-import DefaultParentRoomField from './DefaultParentRoomField';
 
 type CreateDiscussionFormValues = {
 	name: string;

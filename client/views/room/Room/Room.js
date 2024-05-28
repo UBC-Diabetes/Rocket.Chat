@@ -1,6 +1,10 @@
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import React, { useDebugValue, useMemo } from 'react';
 
+import Aside from './Aside';
+import Body from './Body';
+import Footer from './Footer';
+import LazyComponent from './LazyComponent';
 import { ErrorBoundary } from '../../../components/ErrorBoundary';
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { useUserPreference } from '../../../contexts/UserContext';
@@ -15,10 +19,6 @@ import {
 	useTabBarClose,
 	useTabBarOpenUserInfo,
 } from '../providers/ToolboxProvider';
-import Aside from './Aside';
-import Body from './Body';
-import Footer from './Footer';
-import LazyComponent from './LazyComponent';
 
 const Room = () => {
 	const t = useTranslation();
