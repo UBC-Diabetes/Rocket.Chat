@@ -5,6 +5,7 @@ import {
 } from '@rocket.chat/fuselage-hooks';
 import React, { FC, memo, MouseEvent, useCallback, useMemo, useState } from 'react';
 
+import CannedResponseList from './CannedResponseList';
 import { chatMessages } from '../../../../../../app/ui';
 import { useSetModal } from '../../../../../../client/contexts/ModalContext';
 import { useCurrentRoute, useRoute } from '../../../../../../client/contexts/RouterContext';
@@ -14,7 +15,6 @@ import { useRoom } from '../../../../../../client/views/room/contexts/RoomContex
 import { useCannedResponseFilterOptions } from '../../../hooks/useCannedResponseFilterOptions';
 import { useCannedResponseList } from '../../../hooks/useCannedResponseList';
 import CreateCannedResponse from '../../CannedResponse/modals';
-import CannedResponseList from './CannedResponseList';
 
 export const WrapCannedResponseList: FC<{ tabBar: any }> = ({ tabBar }) => {
 	const room = useRoom();

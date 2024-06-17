@@ -1,6 +1,7 @@
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import React from 'react';
 
+import RoomInfo from './RoomInfo';
 import { RoomManager } from '../../../../../../app/ui-utils/client/lib/RoomManager';
 import { roomTypes, UiTextContext } from '../../../../../../app/utils/client';
 import GenericModal from '../../../../../components/GenericModal';
@@ -17,7 +18,6 @@ import { useEndpointActionExperimental } from '../../../../../hooks/useEndpointA
 import WarningModal from '../../../../admin/apps/WarningModal';
 import { useTabBarClose } from '../../../providers/ToolboxProvider';
 import ChannelToTeamModal from '../ChannelToTeamModal/ChannelToTeamModal';
-import RoomInfo from './RoomInfo';
 
 const retentionPolicyMaxAge = {
 	c: 'RetentionPolicy_MaxAge_Channels',

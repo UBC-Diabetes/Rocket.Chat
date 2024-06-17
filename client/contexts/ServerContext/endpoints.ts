@@ -1,4 +1,3 @@
-import { EngagementDashboardActiveUsersEndpoint } from '../../../ee/app/engagement-dashboard/client/contexts/ServerContext/endpoints/EngagementDashboardActiveUsers';
 import { ExternalComponentsEndpoint as AppsExternalComponentsEndpoint } from './endpoints/apps/externalComponents';
 import { FilesEndpoint as ChannelsFilesEndpoint } from './endpoints/v1/channels/files';
 import { ChannelsMembersEndpoint } from './endpoints/v1/channels/members';
@@ -38,6 +37,7 @@ import { ListRoomsEndpoint } from './endpoints/v1/teams/listRooms';
 import { ListRoomsOfUserEndpoint } from './endpoints/v1/teams/listRoomsOfUser';
 import { AutocompleteEndpoint as UsersAutocompleteEndpoint } from './endpoints/v1/users/autocomplete';
 import { SendEmailCodeEndpoint } from './endpoints/v1/users/twoFactorAuth/sendEmailCode';
+import { EngagementDashboardActiveUsersEndpoint } from '../../../ee/app/engagement-dashboard/client/contexts/ServerContext/endpoints/EngagementDashboardActiveUsers';
 
 export type ServerEndpoints = {
 	'chat.getMessage': ChatGetMessageEndpoint;

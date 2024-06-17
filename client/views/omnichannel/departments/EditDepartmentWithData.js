@@ -2,12 +2,12 @@
 import { Box } from '@rocket.chat/fuselage';
 import React from 'react';
 
+import EditDepartment from './EditDepartment';
+import EditDepartmentWithAllowedForwardData from './EditDepartmentWithAllowedForwardData';
 import { FormSkeleton } from '../../../components/Skeleton';
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { AsyncStatePhase } from '../../../hooks/useAsyncState';
 import { useEndpointData } from '../../../hooks/useEndpointData';
-import EditDepartment from './EditDepartment';
-import EditDepartmentWithAllowedForwardData from './EditDepartmentWithAllowedForwardData';
 
 const param = { onlyMyDepartments: true };
 function EditDepartmentWithData({ id, reload, title }) {

@@ -1,11 +1,11 @@
 import { Box, CheckBox } from '@rocket.chat/fuselage';
 import React, { FC, ReactElement } from 'react';
 
+import ChannelRow from './contextualBar/ChannelRow';
 import { IRoom } from '../../../definition/IRoom';
 import GenericTable from '../../components/GenericTable';
 import { useTranslation } from '../../contexts/TranslationContext';
 import { useFormatDateAndTime } from '../../hooks/useFormatDateAndTime';
-import ChannelRow from './contextualBar/ChannelRow';
 
 type ChannelDesertionTableProps = {
 	lastOwnerWarning: boolean | undefined;

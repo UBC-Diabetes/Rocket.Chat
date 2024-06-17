@@ -1,13 +1,13 @@
 import { Box, ActionButton, Skeleton } from '@rocket.chat/fuselage';
 import React, { forwardRef } from 'react';
 
-import MarkdownText from '../MarkdownText';
-import * as Status from '../UserStatus';
-import UserAvatar from '../avatar/UserAvatar';
 import Info from './Info';
 import Roles from './Roles';
 import UserCardContainer from './UserCardContainer';
 import Username from './Username';
+import MarkdownText from '../MarkdownText';
+import * as Status from '../UserStatus';
+import UserAvatar from '../avatar/UserAvatar';
 
 const clampStyle = {
 	display: '-webkit-box',

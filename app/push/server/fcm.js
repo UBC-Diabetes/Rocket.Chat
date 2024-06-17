@@ -87,13 +87,7 @@ function getFCMMessagesFromPushData(userTokens, notification) {
 }
 
 // Function to send FCM notifications
-export const sendFCM = function ({
-	userTokens,
-	notification,
-	_replaceToken,
-	_removeToken,
-	options,
-}) {
+export const sendFCM = function ({ userTokens, notification, options }) {
 	const tokens = typeof userTokens === "string" ? [userTokens] : userTokens;
 	if (!tokens.length) {
 		logger.log("sendFCM no push tokens found");

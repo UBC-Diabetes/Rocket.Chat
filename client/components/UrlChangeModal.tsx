@@ -1,8 +1,8 @@
 import { Box } from '@rocket.chat/fuselage';
 import React, { ReactElement } from 'react';
 
-import { useTranslation } from '../contexts/TranslationContext';
 import GenericModal from './GenericModal';
+import { useTranslation } from '../contexts/TranslationContext';
 
 type UrlChangeModalProps = {
 	onConfirm: () => void;

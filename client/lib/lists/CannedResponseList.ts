@@ -1,6 +1,6 @@
+import { RecordList } from './RecordList';
 import { ILivechatDepartment } from '../../../definition/ILivechatDepartment';
 import { IOmnichannelCannedResponse } from '../../../definition/IOmnichannelCannedResponse';
-import { RecordList } from './RecordList';
 
 export type CannedResponseOptions = {
 	filter: string;

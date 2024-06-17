@@ -2,6 +2,11 @@ import { Table, Box } from '@rocket.chat/fuselage';
 import { useDebouncedValue, useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import React, { useMemo, useCallback, useState, FC, ReactElement } from 'react';
 
+import CannedResponseEditWithData from './CannedResponseEditWithData';
+import CannedResponseFilter from './CannedResponseFilter';
+import CannedResponseNew from './CannedResponseNew';
+import CannedResponsesPage from './CannedResponsesPage';
+import RemoveCannedResponseButton from './RemoveCannedResponseButton';
 import GenericTable from '../../../../client/components/GenericTable';
 import NotAuthorizedPage from '../../../../client/components/NotAuthorizedPage';
 import PageSkeleton from '../../../../client/components/PageSkeleton';
@@ -14,11 +19,6 @@ import { useEndpointData } from '../../../../client/hooks/useEndpointData';
 import { useForm } from '../../../../client/hooks/useForm';
 import { useFormatDateAndTime } from '../../../../client/hooks/useFormatDateAndTime';
 import { AsyncStatePhase } from '../../../../client/lib/asyncState';
-import CannedResponseEditWithData from './CannedResponseEditWithData';
-import CannedResponseFilter from './CannedResponseFilter';
-import CannedResponseNew from './CannedResponseNew';
-import CannedResponsesPage from './CannedResponsesPage';
-import RemoveCannedResponseButton from './RemoveCannedResponseButton';
 
 const CannedResponsesRoute: FC = () => {
 	const t = useTranslation();

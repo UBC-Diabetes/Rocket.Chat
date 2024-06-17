@@ -1,6 +1,9 @@
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import React, { useCallback } from 'react';
 
+import DeleteTeamModal from './Delete';
+import LeaveTeamModal from './Leave';
+import TeamsInfo from './TeamsInfo';
 import { roomTypes, UiTextContext } from '../../../../../app/utils/client';
 import { GenericModalDoNotAskAgain } from '../../../../components/GenericModal';
 import MarkdownText from '../../../../components/MarkdownText';
@@ -16,9 +19,6 @@ import { useDontAskAgain } from '../../../../hooks/useDontAskAgain';
 import { useEndpointActionExperimental } from '../../../../hooks/useEndpointAction';
 import { useTabBarClose, useTabBarOpen } from '../../../room/providers/ToolboxProvider';
 import ConvertToChannelModal from '../../ConvertToChannelModal';
-import DeleteTeamModal from './Delete';
-import LeaveTeamModal from './Leave';
-import TeamsInfo from './TeamsInfo';
 
 const retentionPolicyMaxAge = {
 	c: 'RetentionPolicy_MaxAge_Channels',

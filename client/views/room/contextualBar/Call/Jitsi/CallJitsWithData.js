@@ -3,6 +3,9 @@ import { useMutableCallback, useSafely } from '@rocket.chat/fuselage-hooks';
 import { clear } from '@rocket.chat/memo';
 import React, { useRef, useEffect, useState, useMemo, useLayoutEffect, memo } from 'react';
 
+import CallJitsi from './CallJitsi';
+import CallModal from './components/CallModal';
+import { JitsiBridge } from './lib/JitsiBridge';
 import { HEARTBEAT, TIMEOUT, DEBOUNCE } from '../../../../../../app/videobridge/constants';
 import { useConnectionStatus } from '../../../../../contexts/ConnectionStatusContext';
 import { useSetModal } from '../../../../../contexts/ModalContext';
@@ -13,9 +16,6 @@ import { useTranslation } from '../../../../../contexts/TranslationContext';
 import { useUser } from '../../../../../contexts/UserContext';
 import { useRoom } from '../../../contexts/RoomContext';
 import { useTabBarClose } from '../../../providers/ToolboxProvider';
-import CallJitsi from './CallJitsi';
-import CallModal from './components/CallModal';
-import { JitsiBridge } from './lib/JitsiBridge';
 
 export { default as CallJitsi } from './CallJitsi';
 

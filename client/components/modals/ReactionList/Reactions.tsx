@@ -1,10 +1,10 @@
 import { Box } from '@rocket.chat/fuselage';
 import React, { ReactElement } from 'react';
 
+import ReactionUserTag from './ReactionUserTag';
 import { IUser } from '../../../../definition/IUser';
 import { useSetting } from '../../../contexts/SettingsContext';
 import Emoji from '../../Emoji';
-import ReactionUserTag from './ReactionUserTag';
 
 type ReactionsProps = {
 	reactions: ReactElement;

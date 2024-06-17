@@ -1,12 +1,12 @@
 import React, { FC, memo, useCallback, useEffect, useMemo, useState } from 'react';
 
+import CreateCannedResponseModal from './CreateCannedResponseModal';
 import { usePermission } from '../../../../../../../client/contexts/AuthorizationContext';
 import { useSetModal } from '../../../../../../../client/contexts/ModalContext';
 import { useEndpoint } from '../../../../../../../client/contexts/ServerContext';
 import { useToastMessageDispatch } from '../../../../../../../client/contexts/ToastMessagesContext';
 import { useTranslation } from '../../../../../../../client/contexts/TranslationContext';
 import { useForm } from '../../../../../../../client/hooks/useForm';
-import CreateCannedResponseModal from './CreateCannedResponseModal';
 
 const WrapCreateCannedResponseModal: FC<{ data?: any; reloadCannedList?: any }> = ({
 	data,
