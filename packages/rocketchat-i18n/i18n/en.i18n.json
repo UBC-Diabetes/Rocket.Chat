@@ -3350,6 +3350,7 @@
   "Push_gateway": "Gateway",
   "Push_gateway_description": "Multiple lines can be used to specify multiple gateways",
   "Push_gcm_api_key": "GCM API Key",
+  "Push_google_api_credentials": "Google API Credentials for FCM",
   "Push_gcm_project_number": "GCM Project Number",
   "Push_production": "Production",
   "Push_request_content_from_server": "Fetch full message content from the server on receipt",
