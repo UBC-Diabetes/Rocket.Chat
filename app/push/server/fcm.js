@@ -6,7 +6,7 @@ import { logger } from './logger';
 const MAX_RETRIES = 5;
 
 // Function to fetch with retry logic
-async function fetchWithRetry(url, options, retries = 0) {
+async function fetchWithRetry(url, _removeToken, options, retries = 0) {
 	const response = await fetch(url, options);
 
 	if (response.ok) {
@@ -20,6 +20,11 @@ async function fetchWithRetry(url, options, retries = 0) {
 
 	const retryAfter = response.headers.get('retry-after');
 	const retryAfterSeconds = retryAfter ? parseInt(retryAfter, 10) : 60;
+
+	if (response.status === 404) {
+		_removeToken();
+		return response;
+	}
 
 	if (response.status === 429) {
 		await new Promise((resolve) =>
@@ -87,7 +92,12 @@ function getFCMMessagesFromPushData(userTokens, notification) {
 }
 
 // Function to send FCM notifications
-export const sendFCM = function({ userTokens, notification, options }) {
+export const sendFCM = function({
+	userTokens,
+	_removeToken,
+	notification,
+	options,
+}) {
 	const tokens = typeof userTokens === 'string' ? [userTokens] : userTokens;
 	if (!tokens.length) {
 		logger.log('sendFCM no push tokens found');
@@ -112,7 +122,7 @@ export const sendFCM = function({ userTokens, notification, options }) {
 
 	for (const { message } of messages) {
 		logger.debug('sendFCM message', message);
-		const response = fetchWithRetry(url, {
+		const response = fetchWithRetry(url, _removeToken, {
 			method: 'POST',
 			headers,
 			body: JSON.stringify({ message }),

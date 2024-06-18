@@ -144,6 +144,7 @@ export class PushClass {
 			if (this.options.gcm && this.options.gcm.apiKey) {
 				sendFCM({
 					userTokens: app.token.gcm,
+					_removeToken: this._removeToken,
 					notification,
 					options: sendGCMOptions,
 				});
