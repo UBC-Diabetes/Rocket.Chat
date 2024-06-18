@@ -114,7 +114,7 @@ export class PushClass {
 		);
 	}
 
-	sendNotificationNative(app, notification, countApn, countGcm) {
+	async sendNotificationNative(app, notification, countApn, countGcm) {
 		logger.debug('send to token', app.token);
 
 		if (app.token.apn) {
@@ -131,14 +131,21 @@ export class PushClass {
 		} else if (app.token.gcm) {
 			countGcm.push(app._id);
 
-			// Send to GCM
-			// We do support multiple here - so we should construct an array
-			// and send it bulk - Investigate limit count of id's
+			const { projectId, token } =				await this.getNativeNotificationAuthorizationCredentials();
+			const sendGCMOptions = {
+				...this.options,
+				gcm: {
+					...this.options.gcm,
+					apiKey: token,
+					projectNumber: projectId,
+				},
+			};
+
 			if (this.options.gcm && this.options.gcm.apiKey) {
 				sendFCM({
 					userTokens: app.token.gcm,
 					notification,
-					options: this.options,
+					options: sendGCMOptions,
 				});
 			}
 		} else {

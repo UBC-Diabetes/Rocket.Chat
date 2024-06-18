@@ -1,7 +1,7 @@
-import fetch from "node-fetch";
-import { EJSON } from "meteor/ejson";
+import fetch from 'node-fetch';
+import { EJSON } from 'meteor/ejson';
 
-import { logger } from "./logger";
+import { logger } from './logger';
 
 const MAX_RETRIES = 5;
 
@@ -14,16 +14,16 @@ async function fetchWithRetry(url, options, retries = 0) {
 	}
 
 	if (retries >= MAX_RETRIES) {
-		logger.error("sendFCM error: max retries reached");
+		logger.error('sendFCM error: max retries reached');
 		return response;
 	}
 
-	const retryAfter = response.headers.get("retry-after");
+	const retryAfter = response.headers.get('retry-after');
 	const retryAfterSeconds = retryAfter ? parseInt(retryAfter, 10) : 60;
 
 	if (response.status === 429) {
 		await new Promise((resolve) =>
-			setTimeout(resolve, retryAfterSeconds * 1000)
+			setTimeout(resolve, retryAfterSeconds * 1000),
 		);
 		return fetchWithRetry(url, options, retries + 1);
 	}
@@ -35,7 +35,7 @@ async function fetchWithRetry(url, options, retries = 0) {
 	}
 
 	const error = await response.json();
-	logger.error("sendFCM error", error);
+	logger.error('sendFCM error', error);
 
 	return response;
 }
@@ -67,7 +67,7 @@ function getFCMMessagesFromPushData(userTokens, notification) {
 	}
 
 	if (notification.contentAvailable) {
-		data["content-available"] = notification.contentAvailable.toString();
+		data['content-available'] = notification.contentAvailable.toString();
 	}
 
 	const notificationField = {
@@ -79,7 +79,7 @@ function getFCMMessagesFromPushData(userTokens, notification) {
 		notification: notificationField,
 		data,
 		android: {
-			priority: "HIGH",
+			priority: 'HIGH',
 		},
 	};
 
@@ -87,39 +87,39 @@ function getFCMMessagesFromPushData(userTokens, notification) {
 }
 
 // Function to send FCM notifications
-export const sendFCM = function ({ userTokens, notification, options }) {
-	const tokens = typeof userTokens === "string" ? [userTokens] : userTokens;
+export const sendFCM = function({ userTokens, notification, options }) {
+	const tokens = typeof userTokens === 'string' ? [userTokens] : userTokens;
 	if (!tokens.length) {
-		logger.log("sendFCM no push tokens found");
+		logger.log('sendFCM no push tokens found');
 		return;
 	}
 
-	logger.debug("sendFCM", tokens, notification);
+	logger.debug('sendFCM', tokens, notification);
 
 	const messages = getFCMMessagesFromPushData(tokens, notification);
 	const headers = {
-		"Content-Type": "application/json",
-		Authorization: `Bearer ${options.gcm.apiKey}`,
+		'Content-Type': 'application/json',
+		Authorization: `Bearer ${ options.gcm.apiKey }`,
 		access_token_auth: true,
 	};
 
 	if (!options.gcm.projectNumber.trim()) {
-		logger.error("sendFCM error: GCM project number is missing");
+		logger.error('sendFCM error: GCM project number is missing');
 		return;
 	}
 
-	const url = `https://fcm.googleapis.com/v1/projects/${options.gcm.projectNumber}/messages:send`;
+	const url = `https://fcm.googleapis.com/v1/projects/${ options.gcm.projectNumber }/messages:send`;
 
 	for (const { message } of messages) {
-		logger.debug("sendFCM message", message);
+		logger.debug('sendFCM message', message);
 		const response = fetchWithRetry(url, {
-			method: "POST",
+			method: 'POST',
 			headers,
 			body: JSON.stringify({ message }),
 		});
 
 		response.catch((err) => {
-			logger.error("sendFCM error", err);
+			logger.error('sendFCM error', err);
 		});
 	}
 };
