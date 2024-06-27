@@ -399,69 +399,50 @@ export class PushClass {
 		}
 	}
 
+	hasApnOptions(options) {
+		return Match.test(options.apn, Object);
+	}
+
+	hasGcmOptions(options) {
+		return Match.test(options.gcm, Object);
+	}
+
 	send(options) {
-		// If on the client we set the user id - on the server we need an option
-		// set or we default to "<SERVER>" as the creator of the notification
-		// If current user not set see if we can set it to the logged in user
-		// this will only run on the client if Meteor.userId is available
-		const currentUser = options.createdBy || '<SERVER>';
+		const notification = {
+			createdAt: new Date(),
+			// createdBy is no longer used, but the gateway still expects it
+			createdBy: '<SERVER>',
+			sent: false,
+			sending: 0,
 
-		// Rig the notification object
-		const notification = Object.assign(
-			{
-				createdAt: new Date(),
-				createdBy: currentUser,
-				sent: false,
-				sending: 0,
-			},
-			_.pick(options, 'from', 'title', 'text', 'userId'),
-		);
-
-		// Add extra
-		Object.assign(
-			notification,
-			_.pick(
+			..._.pick(
 				options,
+				'from',
+				'title',
+				'text',
+				'userId',
 				'payload',
 				'badge',
 				'sound',
 				'notId',
-				'delayUntil',
-				'android_channel_id',
+				'priority',
 			),
-		);
 
-		if (Match.test(options.apn, Object)) {
-			notification.apn = _.pick(
-				options.apn,
-				'from',
-				'title',
-				'text',
-				'badge',
-				'sound',
-				'notId',
-				'category',
-			);
-		}
-
-		if (Match.test(options.gcm, Object)) {
-			notification.gcm = _.pick(
-				options.gcm,
-				'image',
-				'style',
-				'summaryText',
-				'picture',
-				'from',
-				'title',
-				'text',
-				'badge',
-				'sound',
-				'notId',
-				'actions',
-				'android_channel_id',
-			);
-		}
-
+			...this.hasApnOptions(options)
+				? {
+					apn: {
+						..._.pick(options.apn, 'category'),
+					},
+				  }
+				: {},
+			...this.hasGcmOptions(options)
+				? {
+					gcm: {
+						..._.pick(options.gcm, 'image', 'style'),
+					},
+				  }
+				: {},
+		};
 		if (options.contentAvailable != null) {
 			notification.contentAvailable = options.contentAvailable;
 		}
