@@ -392,6 +392,7 @@ export class PushClass {
 			delayUntil: Match.Optional(Date),
 			createdAt: Date,
 			createdBy: Match.OneOf(String, null),
+			priority: Match.Optional(Match.Integer),
 		});
 
 		if (!notification.userId) {
