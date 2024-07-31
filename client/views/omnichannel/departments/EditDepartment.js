@@ -17,6 +17,7 @@ import { useMutableCallback, useUniqueId } from '@rocket.chat/fuselage-hooks';
 import React, { useMemo, useState, useRef } from 'react';
 import { useSubscription } from 'use-subscription';
 
+import DepartmentsAgentsTable from './DepartmentsAgentsTable';
 import { isEmail } from '../../../../app/utils/client';
 import Page from '../../../components/Page';
 import { useRoomsList } from '../../../components/RoomAutoComplete/hooks/useRoomsList';
@@ -30,7 +31,6 @@ import { useEndpointAction } from '../../../hooks/useEndpointAction';
 import { useForm } from '../../../hooks/useForm';
 import { AsyncStatePhase } from '../../../lib/asyncState';
 import { formsSubscription } from '../additionalForms';
-import DepartmentsAgentsTable from './DepartmentsAgentsTable';
 
 function EditDepartment({ data, id, title, reload, allowedToForwardData }) {
 	const t = useTranslation();

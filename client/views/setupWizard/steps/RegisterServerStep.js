@@ -2,6 +2,9 @@ import { Box, CheckBox, Field, Margins } from '@rocket.chat/fuselage';
 import { useAutoFocus, useUniqueId } from '@rocket.chat/fuselage-hooks';
 import React, { useState } from 'react';
 
+import Item from './Item';
+import Items from './Items';
+import Option from './Option';
 import { useMethod } from '../../../contexts/ServerContext';
 import { useSettingsDispatch } from '../../../contexts/SettingsContext';
 import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext';
@@ -10,9 +13,6 @@ import { Pager } from '../Pager';
 import { useSetupWizardContext } from '../SetupWizardState';
 import { Step } from '../Step';
 import { StepHeader } from '../StepHeader';
-import Item from './Item';
-import Items from './Items';
-import Option from './Option';
 
 function RegisterServerStep({ step, title, active }) {
 	const { canDeclineServerRegistration, goToPreviousStep, goToFinalStep } = useSetupWizardContext();

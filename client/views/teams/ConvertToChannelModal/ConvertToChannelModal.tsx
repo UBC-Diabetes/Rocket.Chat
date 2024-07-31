@@ -1,12 +1,12 @@
 import { Skeleton } from '@rocket.chat/fuselage';
 import React, { FC, useMemo } from 'react';
 
+import BaseConvertToChannelModal from './BaseConvertToChannelModal';
 import { IRoom } from '../../../../definition/IRoom';
 import GenericModal from '../../../components/GenericModal';
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { useEndpointData } from '../../../hooks/useEndpointData';
 import { AsyncStatePhase } from '../../../lib/asyncState';
-import BaseConvertToChannelModal from './BaseConvertToChannelModal';
 
 type ConvertToChannelModalProps = {
 	onClose: () => void;

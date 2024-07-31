@@ -1,10 +1,10 @@
 import { Box, Button, Icon, TextInput, Margins, Avatar } from '@rocket.chat/fuselage';
 import React, { useState, useCallback } from 'react';
 
+import UserAvatarSuggestions from './UserAvatarSuggestions';
 import { useTranslation } from '../../../contexts/TranslationContext';
 import { useFileInput } from '../../../hooks/useFileInput';
 import UserAvatar from '../UserAvatar';
-import UserAvatarSuggestions from './UserAvatarSuggestions';
 
 function UserAvatarEditor({
 	currentUsername,

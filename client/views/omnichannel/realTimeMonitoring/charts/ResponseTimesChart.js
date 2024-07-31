@@ -1,14 +1,14 @@
 import React, { useRef, useEffect } from 'react';
 
+import Chart from './Chart';
+import { getMomentChartLabelsAndData } from './getMomentChartLabelsAndData';
+import { getMomentCurrentLabel } from './getMomentCurrentLabel';
+import { useUpdateChartData } from './useUpdateChartData';
 import { drawLineChart } from '../../../../../app/livechat/client/lib/chartHandler';
 import { secondsToHHMMSS } from '../../../../../app/utils/lib/timeConverter';
 import { useTranslation } from '../../../../contexts/TranslationContext';
 import { AsyncStatePhase } from '../../../../hooks/useAsyncState';
 import { useEndpointData } from '../../../../hooks/useEndpointData';
-import Chart from './Chart';
-import { getMomentChartLabelsAndData } from './getMomentChartLabelsAndData';
-import { getMomentCurrentLabel } from './getMomentCurrentLabel';
-import { useUpdateChartData } from './useUpdateChartData';
 
 const [labels, initialData] = getMomentChartLabelsAndData();
 const tooltipCallbacks = {

@@ -1,10 +1,10 @@
 import { Box } from '@rocket.chat/fuselage';
 import React from 'react';
 
-import VerticalBar from '../../../../../../client/components/VerticalBar';
 import CannedResponseComponent from './CannedResponse';
 import CannedResponseListComponent from './CannedResponseList';
 import CannedItemComponent from './Item';
+import VerticalBar from '../../../../../../client/components/VerticalBar';
 
 export default {
 	title: 'omnichannel/CannedResponse/ContextualBar',

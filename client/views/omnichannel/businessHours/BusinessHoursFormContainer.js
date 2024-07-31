@@ -3,11 +3,11 @@ import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import React, { useEffect, useState } from 'react';
 import { useSubscription } from 'use-subscription';
 
+import BusinessHourForm from './BusinessHoursForm';
 import { businessHourManager } from '../../../../app/livechat/client/views/app/business-hours/BusinessHours';
 import { useForm } from '../../../hooks/useForm';
 import { useReactiveValue } from '../../../hooks/useReactiveValue';
 import { formsSubscription } from '../additionalForms';
-import BusinessHourForm from './BusinessHoursForm';
 
 const useChangeHandler = (name, ref) =>
 	useMutableCallback((val) => {

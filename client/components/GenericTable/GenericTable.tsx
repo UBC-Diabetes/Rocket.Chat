@@ -12,9 +12,9 @@ import React, {
 } from 'react';
 import flattenChildren from 'react-keyed-flatten-children';
 
+import LoadingRow from './LoadingRow';
 import { useTranslation } from '../../contexts/TranslationContext';
 import ScrollableContentWrapper from '../ScrollableContentWrapper';
-import LoadingRow from './LoadingRow';
 
 const defaultParamsValue = { text: '', current: 0, itemsPerPage: 25 } as const;
 const defaultSetParamsValue = (): void => undefined;

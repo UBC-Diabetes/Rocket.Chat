@@ -17,9 +17,9 @@ import React, {
 	useEffect,
 } from 'react';
 
+import FilePreview from './FilePreview';
 import { useToastMessageDispatch } from '../../../contexts/ToastMessagesContext';
 import { useTranslation } from '../../../contexts/TranslationContext';
-import FilePreview from './FilePreview';
 
 type FilePreviewModalProps = {
 	onClose: () => void;

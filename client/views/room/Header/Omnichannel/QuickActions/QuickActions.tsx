@@ -1,10 +1,10 @@
 import { Box, ButtonGroup } from '@rocket.chat/fuselage';
 import React, { memo, FC, ComponentProps } from 'react';
 
+import { useQuickActions } from './hooks/useQuickActions';
 import { IOmnichannelRoom } from '../../../../../../definition/IRoom';
 import Header from '../../../../../components/Header';
 import { useTranslation } from '../../../../../contexts/TranslationContext';
-import { useQuickActions } from './hooks/useQuickActions';
 
 type QuickActionsProps = {
 	room: IOmnichannelRoom;

@@ -1,11 +1,11 @@
 import { useMutableCallback } from '@rocket.chat/fuselage-hooks';
 import React, { ReactElement } from 'react';
 
+import Reactions from './Reactions';
 import { openUserCard } from '../../../../app/ui/client/lib/UserCard';
 import { IUser } from '../../../../definition/IUser';
 import { useTranslation } from '../../../contexts/TranslationContext';
 import GenericModal from '../../GenericModal';
-import Reactions from './Reactions';
 
 type ReactionListProps = {
 	rid: string;

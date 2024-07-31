@@ -1,11 +1,11 @@
 import { Badge } from '@rocket.chat/fuselage';
 import React, { memo } from 'react';
 
+import SidebarIcon from './SidebarIcon';
+import { normalizeSidebarMessage } from './normalizeSidebarMessage';
 import { roomTypes } from '../../../app/utils/client';
 import RoomMenu from '../RoomMenu';
 import { useSidebarClose } from '../hooks/useSidebarClose';
-import SidebarIcon from './SidebarIcon';
-import { normalizeSidebarMessage } from './normalizeSidebarMessage';
 
 const getMessage = (room, lastMessage, t) => {
 	if (!lastMessage) {

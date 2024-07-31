@@ -1,9 +1,9 @@
 import React, { Dispatch, FC, Key, memo, ReactElement, ReactNode, SetStateAction } from 'react';
 
+import FilterByText from './FilterByText';
 import { IOmnichannelRoom } from '../../../../definition/IRoom';
 import GenericTable from '../../../components/GenericTable';
 import Page from '../../../components/Page';
-import FilterByText from './FilterByText';
 
 type CurrentChatsPageData = {
 	rooms: IOmnichannelRoom[];

@@ -3,26 +3,32 @@ import { Match, check } from 'meteor/check';
 import { Mongo } from 'meteor/mongo';
 import { HTTP } from 'meteor/http';
 import _ from 'underscore';
+import { JWT } from 'google-auth-library';
 
 import { initAPN, sendAPN } from './apn';
-import { sendGCM } from './gcm';
+import { sendFCM } from './fcm';
 import { logger } from './logger';
 import { settings } from '../../settings/server';
 
 export const _matchToken = Match.OneOf({ apn: String }, { gcm: String });
-export const appTokensCollection = new Mongo.Collection('_raix_push_app_tokens');
+export const appTokensCollection = new Mongo.Collection(
+	'_raix_push_app_tokens',
+);
 
 appTokensCollection._ensureIndex({ userId: 1 });
 
 export class PushClass {
-	options = {}
+	options = {};
 
-	isConfigured = false
+	isConfigured = false;
 
 	configure(options) {
-		this.options = Object.assign({
-			sendTimeout: 60000, // Timeout period for notification send
-		}, options);
+		this.options = Object.assign(
+			{
+				sendTimeout: 60000, // Timeout period for notification send
+			},
+			options,
+		);
 		// https://npmjs.org/package/apn
 
 		// After requesting the certificate from Apple, export your private key as
@@ -62,8 +68,38 @@ export class PushClass {
 		}, interval);
 	}
 
+	async getNativeNotificationAuthorizationCredentials() {
+		const credentialsString = settings.get('Push_google_api_credentials');
+		if (!credentialsString.trim()) {
+			throw new Error('Push_google_api_credentials is not set');
+		}
+
+		try {
+			const credentials = JSON.parse(credentialsString);
+
+			const client = new JWT({
+				email: credentials.client_email,
+				key: credentials.private_key,
+				keyId: credentials.private_key_id,
+				scopes: 'https://www.googleapis.com/auth/firebase.messaging',
+			});
+
+			await client.authorize();
+
+			return {
+				token: client.credentials.access_token,
+				projectId: credentials.project_id,
+			};
+		} catch (error) {
+			logger.error('Error getting FCM token', error);
+			throw new Error('Error getting FCM token');
+		}
+	}
+
 	_replaceToken(currentToken, newToken) {
-		appTokensCollection.rawCollection().updateMany({ token: currentToken }, { $set: { token: newToken } });
+		appTokensCollection
+			.rawCollection()
+			.updateMany({ token: currentToken }, { $set: { token: newToken } });
 	}
 
 	_removeToken(token) {
@@ -71,12 +107,14 @@ export class PushClass {
 	}
 
 	_shouldUseGateway() {
-		return !!this.options.gateways
+		return (
+			!!this.options.gateways
 			&& settings.get('Register_Server')
-			&& settings.get('Cloud_Service_Agree_PrivacyTerms');
+			&& settings.get('Cloud_Service_Agree_PrivacyTerms')
+		);
 	}
 
-	sendNotificationNative(app, notification, countApn, countGcm) {
+	async sendNotificationNative(app, notification, countApn, countGcm) {
 		logger.debug('send to token', app.token);
 
 		if (app.token.apn) {
@@ -84,16 +122,32 @@ export class PushClass {
 			// Send to APN
 			if (this.options.apn) {
 				notification.topic = app.appName;
-				sendAPN({ userToken: app.token.apn, notification, _removeToken: this._removeToken });
+				sendAPN({
+					userToken: app.token.apn,
+					notification,
+					_removeToken: this._removeToken,
+				});
 			}
 		} else if (app.token.gcm) {
 			countGcm.push(app._id);
 
-			// Send to GCM
-			// We do support multiple here - so we should construct an array
-			// and send it bulk - Investigate limit count of id's
+			const { projectId, token } =				await this.getNativeNotificationAuthorizationCredentials();
+			const sendGCMOptions = {
+				...this.options,
+				gcm: {
+					...this.options.gcm,
+					apiKey: token,
+					projectNumber: projectId,
+				},
+			};
+
 			if (this.options.gcm && this.options.gcm.apiKey) {
-				sendGCM({ userTokens: app.token.gcm, notification, _replaceToken: this._replaceToken, _removeToken: this._removeToken, options: this.options });
+				sendFCM({
+					userTokens: app.token.gcm,
+					_removeToken: this._removeToken,
+					notification,
+					options: sendGCMOptions,
+				});
 			}
 		} else {
 			throw new Error('send got a faulty query');
@@ -115,44 +169,71 @@ export class PushClass {
 			data.headers.Authorization = this.options.getAuthorization();
 		}
 
-		return HTTP.post(`${ gateway }/push/${ service }/send`, data, (error, response) => {
-			if (response?.statusCode === 406) {
-				logger.info('removing push token', token);
-				appTokensCollection.remove({
-					$or: [{
-						'token.apn': token,
-					}, {
-						'token.gcm': token,
-					}],
-				});
-				return;
-			}
+		return HTTP.post(
+			`${ gateway }/push/${ service }/send`,
+			data,
+			(error, response) => {
+				if (response?.statusCode === 406) {
+					logger.info('removing push token', token);
+					appTokensCollection.remove({
+						$or: [
+							{
+								'token.apn': token,
+							},
+							{
+								'token.gcm': token,
+							},
+						],
+					});
+					return;
+				}
 
-			if (response?.statusCode === 422) {
-				logger.info('gateway rejected push notification. not retrying.', response);
-				return;
-			}
+				if (response?.statusCode === 422) {
+					logger.info(
+						'gateway rejected push notification. not retrying.',
+						response,
+					);
+					return;
+				}
 
-			if (response?.statusCode === 401) {
-				logger.warn('Error sending push to gateway (not authorized)', response);
-				return;
-			}
+				if (response?.statusCode === 401) {
+					logger.warn(
+						'Error sending push to gateway (not authorized)',
+						response,
+					);
+					return;
+				}
 
-			if (!error) {
-				return;
-			}
+				if (!error) {
+					return;
+				}
 
-			logger.error(`Error sending push to gateway (${ tries } try) ->`, error);
+				logger.error(`Error sending push to gateway (${ tries } try) ->`, error);
 
-			if (tries <= 4) {
-				// [1, 2, 4, 8, 16] minutes (total 31)
-				const ms = 60000 * Math.pow(2, tries);
+				if (tries <= 4) {
+					// [1, 2, 4, 8, 16] minutes (total 31)
+					const ms = 60000 * Math.pow(2, tries);
 
-				logger.log('Trying sending push to gateway again in', ms, 'milliseconds');
+					logger.log(
+						'Trying sending push to gateway again in',
+						ms,
+						'milliseconds',
+					);
 
-				return Meteor.setTimeout(() => this.sendGatewayPush(gateway, service, token, notification, tries + 1), ms);
-			}
-		});
+					return Meteor.setTimeout(
+						() =>
+							this.sendGatewayPush(
+								gateway,
+								service,
+								token,
+								notification,
+								tries + 1,
+							),
+						ms,
+					);
+				}
+			},
+		);
 	}
 
 	sendNotificationGateway(app, notification, countApn, countGcm) {
@@ -162,12 +243,22 @@ export class PushClass {
 			if (app.token.apn) {
 				countApn.push(app._id);
 				notification.topic = app.appName;
-				return this.sendGatewayPush(gateway, 'apn', app.token.apn, notification);
+				return this.sendGatewayPush(
+					gateway,
+					'apn',
+					app.token.apn,
+					notification,
+				);
 			}
 
 			if (app.token.gcm) {
 				countGcm.push(app._id);
-				return this.sendGatewayPush(gateway, 'gcm', app.token.gcm, notification);
+				return this.sendGatewayPush(
+					gateway,
+					'gcm',
+					app.token.gcm,
+					notification,
+				);
 			}
 		}
 	}
@@ -188,7 +279,10 @@ export class PushClass {
 			throw new Error('Push.send: option "text" not a string');
 		}
 
-		logger.debug(`send message "${ notification.title }" to userId`, notification.userId);
+		logger.debug(
+			`send message "${ notification.title }" to userId`,
+			notification.userId,
+		);
 
 		const query = {
 			userId: notification.userId,
@@ -202,28 +296,49 @@ export class PushClass {
 			logger.debug('send to token', app.token);
 
 			if (this._shouldUseGateway()) {
-				return this.sendNotificationGateway(app, notification, countApn, countGcm);
+				return this.sendNotificationGateway(
+					app,
+					notification,
+					countApn,
+					countGcm,
+				);
 			}
 
 			return this.sendNotificationNative(app, notification, countApn, countGcm);
 		});
 
 		if (settings.get('Log_Level') === '2') {
-			logger.debug(`Sent message "${ notification.title }" to ${ countApn.length } ios apps ${ countGcm.length } android apps`);
+			logger.debug(
+				`Sent message "${ notification.title }" to ${ countApn.length } ios apps ${ countGcm.length } android apps`,
+			);
 
 			// Add some verbosity about the send result, making sure the developer
 			// understands what just happened.
 			if (!countApn.length && !countGcm.length) {
 				if (appTokensCollection.find().count() === 0) {
-					logger.debug('GUIDE: The "appTokensCollection" is empty - No clients have registered on the server yet...');
+					logger.debug(
+						'GUIDE: The "appTokensCollection" is empty - No clients have registered on the server yet...',
+					);
 				}
 			} else if (!countApn.length) {
-				if (appTokensCollection.find({ 'token.apn': { $exists: true } }).count() === 0) {
-					logger.debug('GUIDE: The "appTokensCollection" - No APN clients have registered on the server yet...');
+				if (
+					appTokensCollection
+						.find({ 'token.apn': { $exists: true } })
+						.count() === 0
+				) {
+					logger.debug(
+						'GUIDE: The "appTokensCollection" - No APN clients have registered on the server yet...',
+					);
 				}
 			} else if (!countGcm.length) {
-				if (appTokensCollection.find({ 'token.gcm': { $exists: true } }).count() === 0) {
-					logger.debug('GUIDE: The "appTokensCollection" - No GCM clients have registered on the server yet...');
+				if (
+					appTokensCollection
+						.find({ 'token.gcm': { $exists: true } })
+						.count() === 0
+				) {
+					logger.debug(
+						'GUIDE: The "appTokensCollection" - No GCM clients have registered on the server yet...',
+					);
 				}
 			}
 		}
@@ -277,6 +392,7 @@ export class PushClass {
 			delayUntil: Match.Optional(Date),
 			createdAt: Date,
 			createdBy: Match.OneOf(String, null),
+			priority: Match.Optional(Match.Integer),
 		});
 
 		if (!notification.userId) {
@@ -284,32 +400,50 @@ export class PushClass {
 		}
 	}
 
-	send(options) {
-		// If on the client we set the user id - on the server we need an option
-		// set or we default to "<SERVER>" as the creator of the notification
-		// If current user not set see if we can set it to the logged in user
-		// this will only run on the client if Meteor.userId is available
-		const currentUser = options.createdBy || '<SERVER>';
+	hasApnOptions(options) {
+		return Match.test(options.apn, Object);
+	}
 
-		// Rig the notification object
-		const notification = Object.assign({
+	hasGcmOptions(options) {
+		return Match.test(options.gcm, Object);
+	}
+
+	send(options) {
+		const notification = {
 			createdAt: new Date(),
-			createdBy: currentUser,
+			// createdBy is no longer used, but the gateway still expects it
+			createdBy: '<SERVER>',
 			sent: false,
 			sending: 0,
-		}, _.pick(options, 'from', 'title', 'text', 'userId'));
 
-		// Add extra
-		Object.assign(notification, _.pick(options, 'payload', 'badge', 'sound', 'notId', 'delayUntil', 'android_channel_id'));
+			..._.pick(
+				options,
+				'from',
+				'title',
+				'text',
+				'userId',
+				'payload',
+				'badge',
+				'sound',
+				'notId',
+				'priority',
+			),
 
-		if (Match.test(options.apn, Object)) {
-			notification.apn = _.pick(options.apn, 'from', 'title', 'text', 'badge', 'sound', 'notId', 'category');
-		}
-
-		if (Match.test(options.gcm, Object)) {
-			notification.gcm = _.pick(options.gcm, 'image', 'style', 'summaryText', 'picture', 'from', 'title', 'text', 'badge', 'sound', 'notId', 'actions', 'android_channel_id');
-		}
-
+			...this.hasApnOptions(options)
+				? {
+					apn: {
+						..._.pick(options.apn, 'category'),
+					},
+				  }
+				: {},
+			...this.hasGcmOptions(options)
+				? {
+					gcm: {
+						..._.pick(options.gcm, 'image', 'style'),
+					},
+				  }
+				: {},
+		};
 		if (options.contentAvailable != null) {
 			notification.contentAvailable = options.contentAvailable;
 		}
@@ -324,7 +458,9 @@ export class PushClass {
 		try {
 			this.sendNotification(notification);
 		} catch (error) {
-			logger.debug(`Could not send notification id: "${ notification._id }", Error: ${ error.message }`);
+			logger.debug(
+				`Could not send notification id: "${ notification._id }", Error: ${ error.message }`,
+			);
 			logger.debug(error.stack);
 		}
 	}

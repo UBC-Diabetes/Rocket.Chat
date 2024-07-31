@@ -1,12 +1,12 @@
 import { Callout } from '@rocket.chat/fuselage';
 import React, { useMemo, FC } from 'react';
 
+import CannedResponseEdit from './CannedResponseEdit';
 import { FormSkeleton } from '../../../../client/components/Skeleton';
 import { CannedResponseEndpointGetReturn } from '../../../../client/contexts/ServerContext/endpoints/v1/omnichannel/cannedResponse';
 import { useTranslation } from '../../../../client/contexts/TranslationContext';
 import { AsyncStatePhase } from '../../../../client/hooks/useAsyncState';
 import { useEndpointData } from '../../../../client/hooks/useEndpointData';
-import CannedResponseEdit from './CannedResponseEdit';
 
 const CannedResponseEditWithData: FC<{
 	data: CannedResponseEndpointGetReturn | undefined;

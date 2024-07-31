@@ -1,8 +1,8 @@
 import React, { ReactElement } from 'react';
 
-import { isIE11 } from '../../../../app/ui-utils/client/lib/isIE11';
 import GenericPreview from './GenericPreview';
 import MediaPreview from './MediaPreview';
+import { isIE11 } from '../../../../app/ui-utils/client/lib/isIE11';
 
 export enum FilePreviewType {
 	IMAGE = 'image',
