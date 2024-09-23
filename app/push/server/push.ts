@@ -92,7 +92,6 @@ export class PushClass {
 			};
 		} catch (error) {
 			logger.error('Error getting FCM token', error);
-			throw new Error('Error getting FCM token');
 		}
 	}
 
