@@ -40,6 +40,7 @@ import LivechatExternalMessage from './models/LivechatExternalMessages';
 import OmnichannelQueue from './models/OmnichannelQueue';
 import Analytics from './models/Analytics';
 import EmailInbox from './models/EmailInbox';
+import CalendarEvents from './models/CalendarEvents';
 
 export { AppsLogsModel } from './models/apps-logs-model';
 export { AppsPersistenceModel } from './models/apps-persistence-model';
@@ -52,6 +53,7 @@ export { FederationServers } from './models/FederationServers';
 export {
 	Base,
 	BaseDb,
+    CalendarEvents,
 	Avatars,
 	ExportOperations,
 	Messages,
