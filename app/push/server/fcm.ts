@@ -113,7 +113,7 @@ export const sendFCM = function({
 		access_token_auth: true,
 	};
 
-	if (!options.gcm.projectNumber.trim()) {
+	if (!options.gcm.projectNumber?.trim()) {
 		logger.error('sendFCM error: GCM project number is missing');
 		return;
 	}
