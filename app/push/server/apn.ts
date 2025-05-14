@@ -127,13 +127,11 @@ export const initAPN = ({ options, absoluteUrl }) => {
   // Check certificate data
   if (!options.apn.cert || !options.apn.cert.length) {
     logger.error("ERROR: Push server could not find cert");
-    throw new Error("Missing APN certificate");
   }
 
   // Check key data
   if (!options.apn.key || !options.apn.key.length) {
     logger.error("ERROR: Push server could not find key");
-    throw new Error("Missing APN key");
   }
 
   // Rig apn connection
@@ -144,8 +142,7 @@ export const initAPN = ({ options, absoluteUrl }) => {
     logger.error(e);
   }
   if (!apnConnection) {
-    throw new Error(
-      "APN connection initialization failed: apnConnection is undefined"
-    );
+    logger.warn("APN push skipped: no connection available");
+    return;
   }
 };
