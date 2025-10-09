@@ -105,7 +105,7 @@ function configurePush() {
 		}
 
 		if (!apn.key || apn.key.trim() === '' || !apn.cert || apn.cert.trim() === '') {
-            console.warn('[Push] APN config is incomplete. Disabling APN.');
+			console.warn('[Push] APN config is incomplete. Disabling APN.');
 			apn = undefined;
 		}
 

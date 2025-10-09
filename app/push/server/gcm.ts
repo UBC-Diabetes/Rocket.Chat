@@ -32,7 +32,9 @@ export const sendGCM = function({ userTokens, notification, _replaceToken, _remo
 		data.image = notification.image;
 	}
 
+	// eslint-disable-next-line @typescript-eslint/camelcase
 	if (notification.android_channel_id != null) {
+		// eslint-disable-next-line @typescript-eslint/camelcase
 		data.android_channel_id = notification.android_channel_id;
 	} else {
 		logger.debug('For devices running Android 8.0 or later you are required to provide an android_channel_id. See https://github.com/raix/push/issues/341 for more info');

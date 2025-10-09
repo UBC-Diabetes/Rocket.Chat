@@ -110,6 +110,7 @@ export const sendFCM = function({
 	const headers = {
 		'Content-Type': 'application/json',
 		Authorization: `Bearer ${ options.gcm.apiKey }`,
+		// eslint-disable-next-line @typescript-eslint/camelcase
 		access_token_auth: true,
 	};
 

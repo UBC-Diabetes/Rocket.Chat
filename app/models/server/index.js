@@ -53,7 +53,7 @@ export { FederationServers } from './models/FederationServers';
 export {
 	Base,
 	BaseDb,
-    CalendarEvents,
+	CalendarEvents,
 	Avatars,
 	ExportOperations,
 	Messages,
