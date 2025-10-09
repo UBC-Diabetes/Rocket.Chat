@@ -233,22 +233,27 @@ export const FileUpload = {
 				// toBuffer: Write output to a Buffer. JPEG, PNG, WebP, TIFF and RAW output are supported.
 				// By default, the format will match the input image, except GIF and SVG input which become PNG output.
 				.toBuffer({ resolveWithObject: true })
-				.then(Meteor.bindEnvironment(({ data, info }) => {
-					fs.writeFile(tempFilePath, data, Meteor.bindEnvironment((err) => {
-						if (err != null) {
-							SystemLogger.error(err);
-						}
+					.then(Meteor.bindEnvironment(({ data, info }) => {
+						fs.writeFile(tempFilePath, data, Meteor.bindEnvironment((err) => {
+							if (err != null) {
+								SystemLogger.error(err);
+							}
 
-						this.getCollection().direct.update({ _id: file._id }, {
-							$set: {
-								size: info.size,
-								...['gif', 'svg'].includes(metadata.format) ? { type: 'image/png' } : {},
-							},
-						});
+							this.getCollection().direct.update({ _id: file._id }, {
+								$set: {
+									size: info.size,
+									...['gif', 'svg'].includes(metadata.format) ? { type: 'image/png' } : {},
+								},
+							});
+							future.return();
+						}));
+					}))
+					.catch(Meteor.bindEnvironment((error) => {
+						// Prevent unhandled promise rejections from sharp
+						SystemLogger.error(error);
 						future.return();
 					}));
-				}));
-		}));
+			}));
 
 		return future.wait();
 	},

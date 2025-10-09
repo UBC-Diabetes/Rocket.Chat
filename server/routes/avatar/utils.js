@@ -15,9 +15,16 @@ export const serveAvatar = (avatar, format, res) => {
 
 	if (['png', 'jpg', 'jpeg'].includes(format)) {
 		res.setHeader('Content-Type', `image/${ format }`);
-		sharp(Buffer.from(avatar))
-			.toFormat(format)
-			.pipe(res);
+		const transformer = sharp(Buffer.from(avatar)).toFormat(format);
+		transformer.on('error', () => {
+			try {
+				res.statusCode = 415;
+				res.end();
+			} catch (e) {
+				// noop
+			}
+		});
+		transformer.pipe(res);
 		return;
 	}
 	res.setHeader('Content-Type', 'image/svg+xml');

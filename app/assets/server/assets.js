@@ -510,9 +510,16 @@ WebApp.connectHandlers.use('/assets/', Meteor.bindEnvironment(function(req, res,
 
 	if (format && format !== file.extension && ['png', 'jpg', 'jpeg'].includes(format)) {
 		res.setHeader('Content-Type', `image/${ format }`);
-		sharp(file.content)
-			.toFormat(format)
-			.pipe(res);
+		const transformer = sharp(file.content).toFormat(format);
+		transformer.on('error', () => {
+			try {
+				res.statusCode = 415;
+				res.end();
+			} catch (e) {
+				// noop
+			}
+		});
+		transformer.pipe(res);
 		return;
 	}
 
