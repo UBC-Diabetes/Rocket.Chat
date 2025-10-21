@@ -100,6 +100,7 @@ class NotificationClass {
 	}
 
 	push({ uid, rid, mid }: INotification, item: INotificationItemPush): void {
+		SystemLogger.info('Calling PushNotification.send with data:', JSON.stringify(item.data));
 		PushNotification.send({
 			rid,
 			uid,

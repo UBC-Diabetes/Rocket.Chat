@@ -52,15 +52,16 @@ export class PushClass {
 		logger.debug('Configure', this.options);
 
 		if (this.options.apn) {
-			console.log(
+			logger.info(
 				'[Push] Using APN cert length:',
         this.options.apn?.cert?.length,
 			);
-			console.log(
+			logger.info(
 				'[Push] Using APN key length:',
         this.options.apn?.key?.length,
 			);
 
+			logger.info('initAPN called with options present:', !!this.options);
 			initAPN({ options: this.options, absoluteUrl: Meteor.absoluteUrl() });
 		}
 	}
@@ -145,6 +146,7 @@ export class PushClass {
 			// Send to APN
 			if (this.options.apn) {
 				notification.topic = app.appName;
+				logger.info('About to call sendAPN');
 				sendAPN({
 					userToken: app.token.apn,
 					notification,

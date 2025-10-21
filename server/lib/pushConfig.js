@@ -5,7 +5,9 @@ import { getWorkspaceAccessToken } from '../../app/cloud/server';
 import { hasRole } from '../../app/authorization';
 import { settings } from '../../app/settings';
 import { appTokensCollection, Push } from '../../app/push/server';
+import { Logger } from '../../app/logger';
 
+const logger = new Logger('Push');
 
 Meteor.methods({
 	push_test() {
@@ -72,6 +74,7 @@ Meteor.methods({
 });
 
 function configurePush() {
+	logger.info('configurePush called, Push_enable:', settings.get('Push_enable'));
 	if (!settings.get('Push_enable')) {
 		return;
 	}
@@ -105,15 +108,18 @@ function configurePush() {
 		}
 
 		if (!apn.key || apn.key.trim() === '' || !apn.cert || apn.cert.trim() === '') {
-			console.warn('[Push] APN config is incomplete. Disabling APN.');
+			logger.warn('[Push] APN config is incomplete. Disabling APN.');
 			apn = undefined;
 		}
+		
+		logger.info('APN config created:', !!apn);
 
 		if (!gcm.apiKey || gcm.apiKey.trim() === '' || !gcm.projectNumber || gcm.projectNumber.trim() === '') {
 			gcm = undefined;
 		}
 	}
 
+	logger.info('Push.configure called with apn:', !!apn, 'gcm:', !!gcm);
 	Push.configure({
 		apn,
 		gcm,
