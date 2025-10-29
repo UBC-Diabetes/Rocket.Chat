@@ -42,7 +42,6 @@ tracker@1.2.0
 #rocketchat:google-natural-language
 rocketchat:livechat
 rocketchat:streamer
-rocketchat:tech-support-monitor
 rocketchat:version
 
 konecty:multiple-instances-status
