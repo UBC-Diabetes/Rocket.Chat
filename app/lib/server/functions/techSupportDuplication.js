@@ -93,6 +93,75 @@ function routeAdminRepliesToUser(message, room) {
 
 		logger.debug(`Routed reply from admin ${message.u.username} back to user ${originalSender}`);
 
+		// Now duplicate this admin's reply to all OTHER admin DMs so everyone sees the conversation
+		TECH_SUPPORT_ADMINS.forEach(otherAdminUsername => {
+			// Skip the admin who made the reply (they already see it)
+			if (otherAdminUsername === message.u.username) {
+				return;
+			}
+
+			try {
+				const otherAdminUser = Users.findOneByUsername(otherAdminUsername);
+				if (!otherAdminUser) {
+					return;
+				}
+
+				// Find DM between this other admin and tech_support
+				let otherAdminTechRoom = Rooms.findOneDirectRoomContainingAllUserIDs([otherAdminUser._id, techSupportUser._id]);
+				
+				if (!otherAdminTechRoom) {
+					// Create DM if it doesn't exist
+					const roomResult = createDirectMessage([techSupportUser.username], otherAdminUser._id);
+					if (roomResult && roomResult.rid) {
+						otherAdminTechRoom = Rooms.findOneById(roomResult.rid);
+					}
+				}
+
+				if (!otherAdminTechRoom) {
+					return;
+				}
+
+				// Find the corresponding duplicated message in this admin's DM
+				const correspondingMessage = Messages.findOne({
+					rid: otherAdminTechRoom._id,
+					'customFields.duplicatedFrom.originalMessageId': parentMessage.customFields.duplicatedFrom.originalMessageId
+				});
+
+				if (!correspondingMessage) {
+					logger.warn(`Could not find corresponding message in ${otherAdminUsername}'s DM`);
+					return;
+				}
+
+				// Create the reply as a thread reply to their corresponding message
+				Messages.insert({
+					rid: otherAdminTechRoom._id,
+					ts: new Date(),
+					msg: message.msg, // Use original reply text
+					tmid: correspondingMessage._id, // Thread it to their corresponding message
+					u: {
+						_id: techSupportUser._id,
+						username: techSupportUser.username,
+						name: techSupportUser.name || techSupportUser.username
+					},
+					mentions: [],
+					channels: [],
+					_updatedAt: new Date(),
+					customFields: {
+						adminReplySync: {
+							originalAdmin: message.u.username,
+							originalReplyId: message._id,
+							syncedToAdmin: otherAdminUsername
+						}
+					}
+				});
+
+				logger.debug(`Synced reply from ${message.u.username} to ${otherAdminUsername}'s DM`);
+
+			} catch (error) {
+				logger.error(`Error syncing reply to admin ${otherAdminUsername}:`, error);
+			}
+		});
+
 	} catch (error) {
 		logger.error(`Error routing admin reply back to user:`, error);
 	}
