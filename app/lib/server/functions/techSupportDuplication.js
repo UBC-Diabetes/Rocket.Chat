@@ -9,8 +9,96 @@ const logger = new Logger('tech-support-duplication');
 // Define the list of administrators who should see tech_support messages
 const TECH_SUPPORT_ADMINS = [
 	'timq',
+    'akshay.tripathi',
+    'tangts',
+    'vanthonio',
+    'ravi.bhan'
 	// Add more usernames as needed
 ];
+
+/**
+ * Routes admin replies back to original user
+ */
+function routeAdminRepliesToUser(message, room) {
+	// Only process direct messages
+	if (room.t !== 'd') {
+		return message;
+	}
+
+	// Only process thread replies (messages with tmid)
+	if (!message.tmid) {
+		return message;
+	}
+
+	// Check if this is an admin replying in a DM with tech_support
+	if (!room.usernames || !room.usernames.includes('tech_support')) {
+		return message;
+	}
+
+	// Skip if tech_support is the one replying (they can handle their own replies)
+	if (message.u.username === 'tech_support') {
+		return message;
+	}
+
+	// Check if sender is one of the admins
+	if (!TECH_SUPPORT_ADMINS.includes(message.u.username)) {
+		return message;
+	}
+
+	// Find the parent message this is replying to
+	const parentMessage = Messages.findOneById(message.tmid);
+	if (!parentMessage || !parentMessage.customFields?.duplicatedFrom) {
+		return message; // Not a reply to a duplicated message
+	}
+
+	// Get the original message details
+	const originalSender = parentMessage.customFields.duplicatedFrom.originalSender;
+	const originalRoom = parentMessage.customFields.duplicatedFrom.originalRoom;
+
+	// Get tech_support user
+	const techSupportUser = Users.findOneByUsername('tech_support');
+	if (!techSupportUser) {
+		return message;
+	}
+
+	// Get original room
+	const userTechRoom = Rooms.findOneById(originalRoom);
+	if (!userTechRoom) {
+		logger.warn(`Original room ${originalRoom} not found for reply routing`);
+		return message;
+	}
+
+	try {
+		// Create reply message from tech_support to original user
+		Messages.insert({
+			rid: userTechRoom._id,
+			ts: new Date(),
+			msg: `**Reply from @${message.u.username}:**\n${message.msg}`,
+			u: {
+				_id: techSupportUser._id,
+				username: techSupportUser.username,
+				name: techSupportUser.name || techSupportUser.username
+			},
+			mentions: [],
+			channels: [],
+			_updatedAt: new Date(),
+			customFields: {
+				adminReply: {
+					adminUser: message.u.username,
+					originalMessageId: parentMessage.customFields.duplicatedFrom.originalMessageId,
+					adminReplyId: message._id
+				}
+			}
+		});
+
+		logger.debug(`Routed reply from admin ${message.u.username} back to user ${originalSender}`);
+
+	} catch (error) {
+		logger.error(`Error routing admin reply back to user:`, error);
+	}
+
+	return message;
+}
 
 /**
  * Duplicates messages sent TO tech_support user into DMs with each admin
@@ -103,3 +191,4 @@ function duplicateTechSupportMessages(message, room) {
 
 // Hook into the message system
 callbacks.add('afterSaveMessage', duplicateTechSupportMessages, callbacks.priority.LOW, 'tech-support-duplication');
+callbacks.add('afterSaveMessage', routeAdminRepliesToUser, callbacks.priority.LOW, 'tech-support-reply-routing');
