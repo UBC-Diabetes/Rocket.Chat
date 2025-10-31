@@ -10,10 +10,10 @@ const logger = new Logger('tech-support-duplication');
 const TECH_SUPPORT_ADMINS = [
 	'timq',
     'timw',
-    'akshay.tripathi',
-    'tangts',
-    'vanthonio',
-    'ravi.bhan'
+    // 'akshay.tripathi',
+    // 'tangts',
+    // 'vanthonio',
+    // 'ravi.bhan'
 	// Add more usernames as needed
 ];
 
@@ -134,11 +134,12 @@ function routeAdminRepliesToUser(message, room) {
 				}
 
 				// Create the reply as a thread reply to their corresponding message
-				Messages.insert({
+				const replyMessage = {
 					rid: otherAdminTechRoom._id,
 					ts: new Date(),
-					msg: message.msg, // Use original reply text
+					msg: `**@${message.u.username}:** ${message.msg}`, // Show which admin replied
 					tmid: correspondingMessage._id, // Thread it to their corresponding message
+					// tshow: true, // Show in main timeline too
 					u: {
 						_id: techSupportUser._id,
 						username: techSupportUser.username,
@@ -154,7 +155,15 @@ function routeAdminRepliesToUser(message, room) {
 							syncedToAdmin: otherAdminUsername
 						}
 					}
-				});
+				};
+
+				const insertedReplyId = Messages.insert(replyMessage);
+
+				// Now properly update the thread metadata on the parent message
+				if (insertedReplyId) {
+					Messages.updateRepliesByThreadId(correspondingMessage._id, [techSupportUser._id], replyMessage.ts);
+					logger.debug(`Updated thread metadata for message ${correspondingMessage._id}`);
+				}
 
 				logger.debug(`Synced reply from ${message.u.username} to ${otherAdminUsername}'s DM`);
 
