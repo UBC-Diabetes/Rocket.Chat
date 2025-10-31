@@ -9,6 +9,7 @@ const logger = new Logger('tech-support-duplication');
 // Define the list of administrators who should see tech_support messages
 const TECH_SUPPORT_ADMINS = [
 	'timq',
+    'timw',
     'akshay.tripathi',
     'tangts',
     'vanthonio',
