@@ -10,10 +10,10 @@ const logger = new Logger('tech-support-duplication');
 const TECH_SUPPORT_ADMINS = [
 	'timq',
     'timw',
-    // 'akshay.tripathi',
-    // 'tangts',
-    // 'vanthonio',
-    // 'ravi.bhan'
+    'akshay.tripathi',
+    'tangts',
+    'vanthonio',
+    'ravi.bhan'
 	// Add more usernames as needed
 ];
 
