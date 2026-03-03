@@ -6,6 +6,7 @@ import { oembedCron } from '../cron/oembed';
 import { statsCron } from '../cron/statistics';
 import { npsCron } from '../cron/nps';
 import { federationCron } from '../cron/federation';
+import { calendarRemindersCron } from '../cron/calendarReminders';
 
 const logger = new Logger('SyncedCron');
 
@@ -21,6 +22,7 @@ Meteor.defer(function() {
 	statsCron(SyncedCron, logger);
 	npsCron(SyncedCron);
 	federationCron(SyncedCron);
+	calendarRemindersCron(SyncedCron);
 
 	SyncedCron.start();
 });
