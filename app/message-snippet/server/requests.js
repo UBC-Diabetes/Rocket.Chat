@@ -26,9 +26,14 @@ WebApp.connectHandlers.use('/snippet/download', function(req, res) {
 		token = req.query.rc_token;
 	}
 
-	const user = Users.findOneByIdAndLoginToken(uid, token);
-
-	if (!(uid && token && user)) {
+	if (uid && token) {
+		const user = Users.findOneByIdAndLoginToken(uid, token);
+		if (!user) {
+			res.writeHead(403);
+			res.end();
+			return false;
+		}
+	} else {
 		res.writeHead(403);
 		res.end();
 		return false;
