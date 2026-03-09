@@ -68,7 +68,10 @@ Meteor.methods({
 		};
 
 		const header = JSON.stringify(HEADER);
-		const payload = JSON.stringify(addUserContextToPayload(commonPayload));
+		const payloadWithContext = addUserContextToPayload(commonPayload);
+		// Add moderator flag at root level (required by Jitsi)
+		payloadWithContext.moderator = true;
+		const payload = JSON.stringify(payloadWithContext);
 
 		return jws.JWS.sign(HEADER.alg, header, payload, { rstr: JITSI_OPTIONS.jitsi_application_secret });
 	},
